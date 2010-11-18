@@ -1,0 +1,5 @@
+nux (0.9.4-0ubuntu1) natty; urgency=low
+
+  * Initial packaging
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 18 Nov 2010 19:17:32 +0100

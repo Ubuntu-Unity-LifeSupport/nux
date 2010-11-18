@@ -1,0 +1,45 @@
+/*
+ * Copyright 2010 Inalogic Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3, as
+ * published by the  Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranties of
+ * MERCHANTABILITY, SATISFACTORY QUALITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the applicable version of the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of both the GNU Lesser General Public
+ * License version 3 along with this program.  If not, see
+ * <http://www.gnu.org/licenses/>
+ *
+ * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ *
+ */
+
+#ifndef NUXGRAPHICS_H
+#define NUXGRAPHICS_H
+
+namespace nux
+{
+  class GLWindowImpl;
+  class GpuDevice;
+  class GraphicsEngine;
+
+  GLWindowImpl *GetThreadGLWindow();
+  GpuDevice *GetThreadGLDeviceFactory();
+  GraphicsEngine *GetThreadGraphicsContext();
+
+  #define NUX_FINDRESOURCELOCATION(a) GNuxGraphicsResources.FindResourceLocation(a, false)()
+  #define NUX_FIND_RESOURCE_LOCATION_NOFAIL(a) GNuxGraphicsResources.FindResourceLocation(a, true)()
+
+  inlDeclareThreadLocalStorage (GLWindowImpl *, 1, ThreadLocal_GLWindowImpl);
+  inlDeclareThreadLocalStorage (GpuDevice *, 2, ThreadLocal_GLDeviceFactory);
+
+  void NuxGraphicsInitialize();
+}
+
+
+#endif // NUXGRAPHICS_H
