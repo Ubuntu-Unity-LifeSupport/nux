@@ -1,3 +1,10 @@
+nux (0.9.4-0ubuntu2) natty; urgency=low
+
+  * removing debian/libnux-0.9-0.symbols and use a shlibs as there is no
+    ABI/API stability + nux doesn't export the same symbols on every arch.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 19 Nov 2010 10:40:41 +0100
+
 nux (0.9.4-0ubuntu1) natty; urgency=low
 
   * Initial packaging
