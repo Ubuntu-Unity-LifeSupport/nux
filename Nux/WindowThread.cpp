@@ -29,14 +29,14 @@
 #include "WindowCompositor.h"
 #include "SystemThread.h"
 #include "FloatingWindow.h"
+//#include "Timeline.h"
 
 #include "WindowThread.h"
-
 namespace nux
 {
-
+  
     TimerFunctor *m_ScrollTimerFunctor;
-    TimerHandle m_ScrollTimerHandler;
+    TimerHandle m_ScrollTimerHandler;  
 
 // Thread registration call. Hidden from the users. Implemented in Nux.cpp
   bool RegisterNuxThread (NThread *ThreadPtr);
@@ -140,8 +140,62 @@ namespace nux
     NULL
   };
 
+   // Timeline source functions
+  static gboolean
+  nux_timeline_prepare  (GSource  *source,
+                         gint     *timeout)
+  {
+    // right now we are assuming that we are vsynced, so that will handle syncronisation
+    // we could guess how long we have to wait for the next frame but thats rather ugly
+    // idealy we need some more api that ensures that timeline/event/relayout/draws are all in sync
+
+    *timeout = 0;
+    return TRUE;
+  }
+
+  static gboolean
+  nux_timeline_check    (GSource  *source)
+  {
+    return TRUE;
+  }
+
+  static gboolean
+  nux_timeline_dispatch (GSource    *source,
+                         GSourceFunc callback,
+                         gpointer    user_data)
+  {
+    GTimeVal time_val;
+    bool has_timelines_left = false;
+    nux_glib_threads_lock();
+    g_source_get_current_time (source, &time_val);
+    WindowThread *window_thread = NUX_STATIC_CAST (WindowThread *, user_data);
+
+    // pump the timelines
+    has_timelines_left = window_thread->ProcessTimelines (&time_val);
+
+    if (!has_timelines_left)
+    {
+      // no timelines left on the stack so lets go ahead and remove the
+      // master clock, to save on wakeups
+      window_thread->StopMasterClock ();
+    }
+
+    nux_glib_threads_unlock();
+    return TRUE;
+  }
+
+  static GSourceFuncs timeline_funcs =
+  {
+    nux_timeline_prepare,
+    nux_timeline_check,
+    nux_timeline_dispatch,
+    NULL
+  };
+
   void WindowThread::InitGlibLoop()
   {
+    GSource *source;
+
     if (!IsEmbeddedWindow ())
     {
       static bool gthread_initialized = false;
@@ -162,8 +216,6 @@ namespace nux
 
     gLibEventMutex = 0; //g_mutex_new();
 
-
-    GSource *source;
     source = g_source_new (&event_funcs, sizeof (NuxEventSource) );
     NuxEventSource *event_source = (NuxEventSource *) source;
 
@@ -182,17 +234,66 @@ namespace nux
     g_source_add_poll (source, &event_source->event_poll_fd);
     g_source_set_can_recurse (source, TRUE);
     g_source_set_callback (source, 0, this, 0);
-
+    
     if (IsEmbeddedWindow ())
       g_source_attach (source, NULL);
     else
       g_source_attach (source, m_GLibContext);
+
+    if (_Timelines->size () > 0)
+      StartMasterClock ();
 
     if (!IsEmbeddedWindow ())
     {
       g_main_loop_run (m_GLibLoop);
       g_main_loop_unref (m_GLibLoop);
     }
+  }
+
+  void WindowThread::StartMasterClock ()
+  {
+    // if we are not embedded and don't have a context yet
+    if (!IsEmbeddedWindow () && m_GLibContext == 0)
+      return;
+
+    if (_MasterClock == NULL)
+      {
+        GTimeVal time_val;
+        // make a source for our master clock
+        _MasterClock = g_source_new (&timeline_funcs, sizeof (GSource));
+
+        g_source_set_priority (_MasterClock, G_PRIORITY_DEFAULT + 10);
+        g_source_set_callback (_MasterClock, 0, this, 0);
+        g_source_set_can_recurse (_MasterClock, TRUE);
+
+        if (IsEmbeddedWindow ())
+          g_source_attach (_MasterClock, NULL);
+        else if (m_GLibContext != 0)
+          g_source_attach (_MasterClock, m_GLibContext);
+
+
+        g_get_current_time (&time_val);
+        _last_timeline_frame_time_sec = time_val.tv_sec;
+        _last_timeline_frame_time_usec = time_val.tv_usec;
+      }
+  }
+
+  void WindowThread::StopMasterClock ()
+  {
+    if (_MasterClock)
+    {
+      g_source_remove (g_source_get_id (_MasterClock));
+      _MasterClock = NULL;
+    }
+  }
+
+  void WindowThread::NuxMainLoopQuit ()
+  {
+    // woo no more main loop! this is prolly bad for nux, so erm
+    // FIXME!! - Jay take a look at this, make sure just quitting the mainloop
+    // is an idea that makes sense (needed for testing)
+    if (!IsEmbeddedWindow ())
+      g_main_loop_quit (m_GLibLoop);
   }
 
   typedef struct
@@ -216,7 +317,7 @@ namespace nux
     {
       dd->window_thread->ExecutionLoop(0);
     }
-
+    
     if(!repeat)
       delete dd;
 
@@ -299,11 +400,18 @@ namespace nux
     m_FramePeriodeCounter = 0;
     m_PeriodeTime = 0;
 
+    _Timelines = new std::list<Timeline*> ();
+    GTimeVal time_val;
+    g_get_current_time (&time_val);
+    _last_timeline_frame_time_sec = time_val.tv_sec;
+    _last_timeline_frame_time_usec = time_val.tv_usec;
+    _MasterClock = NULL;
+
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
     m_GLibLoop      = 0;
     m_GLibContext   = 0;
 #endif
-
+    
     _pending_wake_up_timer = false;
     _inside_main_loop = false;
     _inside_timer_loop = false;
@@ -314,17 +422,23 @@ namespace nux
   WindowThread::~WindowThread()
   {
     ThreadDtor();
+    std::list<Timeline*>::iterator li;
+    for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
+    {
+      (*li)->UnReference ();
+    }
+    delete _Timelines;
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)
   {
     GetTimer ().RemoveTimerHandler (_async_wake_up_timer);
     _pending_wake_up_timer = false;
-
+    
     WindowThread* window_thread = NUX_STATIC_CAST(WindowThread*, data);
     window_thread->ExecutionLoop(0);
   }
-
+  
   void WindowThread::SetLayout (Layout *layout)
   {
     m_AppLayout = layout;
@@ -400,7 +514,7 @@ namespace nux
   {
     m_RedrawRequested = true;
     RedrawRequested.emit();
-
+    
     if (!IsEmbeddedWindow())
     {
       if ((_inside_main_loop == false) && (_inside_timer_loop == false) && (_pending_wake_up_timer == false))
@@ -410,7 +524,8 @@ namespace nux
       }
     }
   }
-
+  
+  // NUXTODO: rename to ComputeLayoutBeforeRendering
   void WindowThread::AddObjectToRefreshList (Area *bo)
   {
     nuxAssert (bo != 0);
@@ -516,6 +631,22 @@ namespace nux
 
     if (!alreadyComputingLayout)
       SetComputingLayout (false);
+  }
+
+  void WindowThread::AddTimeline (Timeline *timeline)
+  {
+    _Timelines->push_back (timeline);
+    _Timelines->unique ();
+    StartMasterClock ();
+  }
+
+  void WindowThread::RemoveTimeline (Timeline *timeline)
+  {
+    _Timelines->remove (timeline);
+    if (_Timelines->size () == 0)
+    {
+      StopMasterClock ();
+    }
   }
 
   unsigned int WindowThread::Run (void *arg)
@@ -629,7 +760,7 @@ namespace nux
           KeepRunning = false;
           return 0; //break;
       }
-
+      
       if (IsEmbeddedWindow () && event.e_event ==	NUX_SIZE_CONFIGURATION)
         m_size_configuration_event = true;
 
@@ -676,14 +807,14 @@ namespace nux
           m_size_configuration_event = true;
       }
 
-      // Some action may have caused layouts and areas to request a recompute.
+      // Some action may have caused layouts and areas to request a recompute. 
       // Process them here before the Draw section.
       if(!GetWindow().isWindowMinimized())
       {
           // Process the layouts that requested a recompute.
           RefreshLayout();
       }
-
+      
       _inside_main_loop = false;
 
 // #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -696,7 +827,7 @@ namespace nux
       if (!GetWindow().IsPauseThreadGraphicsRendering() || IsEmbeddedWindow ())
       {
         bool SwapGLBuffer = false;
-
+        
         bool RequestRequired = false;
 
         if (Application->m_bFirstDrawPass)
@@ -964,6 +1095,50 @@ namespace nux
     return state;
   }
 
+  bool WindowThread::ProcessTimelines (GTimeVal *frame_time)
+  {
+    // go through our timelines and tick them
+    // return true if we still have active timelines
+
+    long msecs;
+    msecs = (frame_time->tv_sec - _last_timeline_frame_time_sec) * 1000 +
+            (frame_time->tv_usec - _last_timeline_frame_time_usec) / 1000;
+
+    if (msecs < 0)
+    {
+      _last_timeline_frame_time_sec = frame_time->tv_sec;
+      _last_timeline_frame_time_usec = frame_time->tv_usec;
+      return true;
+    }
+
+    if (msecs > 0)
+    {
+      _last_timeline_frame_time_sec += msecs / 1000;
+      _last_timeline_frame_time_usec += msecs * 1000;
+    }
+
+    std::list<Timeline*>::iterator li;
+    std::list<Timeline*> timelines_copy;
+
+    for (li=_Timelines->begin (); li!=_Timelines->end (); ++li)
+    {
+      (*li)->Reference ();
+      timelines_copy.push_back ((*li));
+    }
+
+  	for(li=timelines_copy.begin(); li!=timelines_copy.end(); ++li)
+    {
+      (*li)->DoTick (msecs);
+    }
+
+    // unreference again
+    for (li=timelines_copy.begin (); li!=timelines_copy.end (); ++li)
+      (*li)->UnReference ();
+
+    // return if we have any timelines left
+    return (_Timelines->size () != 0);
+  }
+
   void WindowThread::EnableMouseKeyboardInput()
   {
     std::list<NThread *>::iterator it;
@@ -1227,7 +1402,7 @@ namespace nux
     if (m_window_compositor)
       m_window_compositor->SetBackgroundPaintLayer (bkg);
   }
-
+  
   Area* WindowThread::GetTopRenderingParent(Area* area)
   {
     NUX_RETURN_VALUE_IF_NULL(area, NULL);
@@ -1243,7 +1418,7 @@ namespace nux
       {
         return parent;
       }
-      else
+      else 
       {
         return GetTopRenderingParent (parent);
       }
@@ -1253,16 +1428,16 @@ namespace nux
       return 0;
     }
   }
-
+  
   void WindowThread::AddToDrawList (View *view)
   {
     Area *parent;
     Geometry geo, pgeo;
-
+    
     geo = view->GetGeometry();
-
+    
     parent = GetTopRenderingParent (view);
-
+    
     if (parent)
     {
       pgeo = parent->GetGeometry();
@@ -1285,12 +1460,12 @@ namespace nux
 
     m_dirty_areas.push_back(geo);
   }
-
+  
   void WindowThread::ClearDrawList ()
   {
     m_dirty_areas.clear ();
   }
-
+  
   std::vector<Geometry> WindowThread::GetDrawList ()
   {
     return m_dirty_areas;
@@ -1386,7 +1561,7 @@ namespace nux
         m_size_configuration_event = true;
     }
 
-    // Some action may have caused layouts and areas to request a recompute.
+    // Some action may have caused layouts and areas to request a recompute. 
     // Process them here before the Draw section.
     if (!GetWindow().isWindowMinimized() )
     {

@@ -349,7 +349,7 @@ SUBDIRS = data NuxCore NuxImage NuxMesh NuxGraphics Nux examples tests
 @DX_COND_doc_TRUE@    $(DX_CLEAN_LATEX)
 
 DISTCLEANFILES = doc/html/* doc/*
-EXTRA_DIST = $(DX_CONFIG) autogen.sh
+EXTRA_DIST = $(DX_CONFIG) autogen.sh COPYING.gpl
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

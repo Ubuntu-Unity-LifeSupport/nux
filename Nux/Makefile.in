@@ -166,6 +166,7 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-Panel.lo \
 	libnux_@NUX_API_VERSION@_la-PopUpWindow.lo \
 	libnux_@NUX_API_VERSION@_la-PropertyList.lo \
+	libnux_@NUX_API_VERSION@_la-PushButton.lo \
 	libnux_@NUX_API_VERSION@_la-RadioButton.lo \
 	libnux_@NUX_API_VERSION@_la-RadioButtonGroup.lo \
 	libnux_@NUX_API_VERSION@_la-RangeValue.lo \
@@ -185,6 +186,8 @@ am__objects_1 = libnux_@NUX_API_VERSION@_la-CheckBoxProperty.lo \
 	libnux_@NUX_API_VERSION@_la-TabView.lo \
 	libnux_@NUX_API_VERSION@_la-TextureArea.lo \
 	libnux_@NUX_API_VERSION@_la-TimeGraph.lo \
+	libnux_@NUX_API_VERSION@_la-Timeline.lo \
+	libnux_@NUX_API_VERSION@_la-TimelineEasings.lo \
 	libnux_@NUX_API_VERSION@_la-TimerProc.lo \
 	libnux_@NUX_API_VERSION@_la-ToolButton.lo \
 	libnux_@NUX_API_VERSION@_la-TreeControl.lo \
@@ -543,6 +546,7 @@ source_cpp = \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
   $(srcdir)/PropertyList.cpp \
+  $(srcdir)/PushButton.cpp \
   $(srcdir)/RadioButton.cpp \
   $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
@@ -562,6 +566,8 @@ source_cpp = \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
+  $(srcdir)/Timeline.cpp \
+  $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \
@@ -671,6 +677,7 @@ source_h = \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/PropertyList.h \
+  $(srcdir)/PushButton.h \
   $(srcdir)/RadioButton.h \
   $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
@@ -691,6 +698,8 @@ source_h = \
   $(srcdir)/TabView.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
+  $(srcdir)/Timeline.h \
+  $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/TreeControl.h \
@@ -872,6 +881,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Panel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PopUpWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PropertyList.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBAProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-RGBValuator.Plo@am__quote@
@@ -899,6 +909,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TextureArea.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Theme.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimeGraph.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimelineEasings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimerProc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-ToolButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_@NUX_API_VERSION@_la-TreeControl.Plo@am__quote@
@@ -1619,6 +1631,14 @@ libnux_@NUX_API_VERSION@_la-PropertyList.lo: $(srcdir)/PropertyList.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-PropertyList.lo `test -f '$(srcdir)/PropertyList.cpp' || echo '$(srcdir)/'`$(srcdir)/PropertyList.cpp
 
+libnux_@NUX_API_VERSION@_la-PushButton.lo: $(srcdir)/PushButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-PushButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-PushButton.lo `test -f '$(srcdir)/PushButton.cpp' || echo '$(srcdir)/'`$(srcdir)/PushButton.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-PushButton.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/PushButton.cpp' object='libnux_@NUX_API_VERSION@_la-PushButton.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-PushButton.lo `test -f '$(srcdir)/PushButton.cpp' || echo '$(srcdir)/'`$(srcdir)/PushButton.cpp
+
 libnux_@NUX_API_VERSION@_la-RadioButton.lo: $(srcdir)/RadioButton.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-RadioButton.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Tpo -c -o libnux_@NUX_API_VERSION@_la-RadioButton.lo `test -f '$(srcdir)/RadioButton.cpp' || echo '$(srcdir)/'`$(srcdir)/RadioButton.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-RadioButton.Plo
@@ -1770,6 +1790,22 @@ libnux_@NUX_API_VERSION@_la-TimeGraph.lo: $(srcdir)/TimeGraph.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TimeGraph.cpp' object='libnux_@NUX_API_VERSION@_la-TimeGraph.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TimeGraph.lo `test -f '$(srcdir)/TimeGraph.cpp' || echo '$(srcdir)/'`$(srcdir)/TimeGraph.cpp
+
+libnux_@NUX_API_VERSION@_la-Timeline.lo: $(srcdir)/Timeline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-Timeline.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Tpo -c -o libnux_@NUX_API_VERSION@_la-Timeline.lo `test -f '$(srcdir)/Timeline.cpp' || echo '$(srcdir)/'`$(srcdir)/Timeline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-Timeline.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/Timeline.cpp' object='libnux_@NUX_API_VERSION@_la-Timeline.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-Timeline.lo `test -f '$(srcdir)/Timeline.cpp' || echo '$(srcdir)/'`$(srcdir)/Timeline.cpp
+
+libnux_@NUX_API_VERSION@_la-TimelineEasings.lo: $(srcdir)/TimelineEasings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TimelineEasings.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimelineEasings.Tpo -c -o libnux_@NUX_API_VERSION@_la-TimelineEasings.lo `test -f '$(srcdir)/TimelineEasings.cpp' || echo '$(srcdir)/'`$(srcdir)/TimelineEasings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimelineEasings.Tpo $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimelineEasings.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/TimelineEasings.cpp' object='libnux_@NUX_API_VERSION@_la-TimelineEasings.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_@NUX_API_VERSION@_la-TimelineEasings.lo `test -f '$(srcdir)/TimelineEasings.cpp' || echo '$(srcdir)/'`$(srcdir)/TimelineEasings.cpp
 
 libnux_@NUX_API_VERSION@_la-TimerProc.lo: $(srcdir)/TimerProc.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_@NUX_API_VERSION@_la-TimerProc.lo -MD -MP -MF $(DEPDIR)/libnux_@NUX_API_VERSION@_la-TimerProc.Tpo -c -o libnux_@NUX_API_VERSION@_la-TimerProc.lo `test -f '$(srcdir)/TimerProc.cpp' || echo '$(srcdir)/'`$(srcdir)/TimerProc.cpp

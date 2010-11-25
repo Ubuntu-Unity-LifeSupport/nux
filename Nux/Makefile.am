@@ -1,4 +1,4 @@
-CLEANFILES = 
+CLEANFILES =
 DISTCLEANFILES =
 EXTRA_DIST =
 
@@ -111,6 +111,7 @@ source_cpp = \
   $(srcdir)/Panel.cpp \
   $(srcdir)/PopUpWindow.cpp \
   $(srcdir)/PropertyList.cpp \
+  $(srcdir)/PushButton.cpp \
   $(srcdir)/RadioButton.cpp \
   $(srcdir)/RadioButtonGroup.cpp \
   $(srcdir)/RangeValue.cpp \
@@ -130,6 +131,8 @@ source_cpp = \
   $(srcdir)/TabView.cpp \
   $(srcdir)/TextureArea.cpp \
   $(srcdir)/TimeGraph.cpp \
+  $(srcdir)/Timeline.cpp \
+  $(srcdir)/TimelineEasings.cpp \
   $(srcdir)/TimerProc.cpp \
   $(srcdir)/ToolButton.cpp \
   $(srcdir)/TreeControl.cpp \
@@ -239,6 +242,7 @@ source_h = \
   $(srcdir)/Panel.h \
   $(srcdir)/PopUpWindow.h \
   $(srcdir)/PropertyList.h \
+  $(srcdir)/PushButton.h \
   $(srcdir)/RadioButton.h \
   $(srcdir)/RadioButtonGroup.h \
   $(srcdir)/RangeValue.h \
@@ -259,6 +263,8 @@ source_h = \
   $(srcdir)/TabView.h \
   $(srcdir)/TextureArea.h \
   $(srcdir)/TimeGraph.h \
+  $(srcdir)/Timeline.h \
+  $(srcdir)/TimelineEasings.h \
   $(srcdir)/TimerProc.h \
   $(srcdir)/ToolButton.h \
   $(srcdir)/TreeControl.h \
