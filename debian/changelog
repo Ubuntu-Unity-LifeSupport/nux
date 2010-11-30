@@ -1,3 +1,13 @@
+nux (0.9.8-0ubuntu1) natty; urgency=low
+
+  * New upstream release + cherry pick latest commit:
+    - don't ship .bmp files but rather .png (LP: #678460)
+    - Clicks outside of Quicklist don't close it (LP: #683079)
+  * debian/rules:
+    - bump shlibs for new release
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 30 Nov 2010 17:32:33 +0100
+
 nux (0.9.6-0ubuntu1) natty; urgency=low
 
   * New upstream release.
