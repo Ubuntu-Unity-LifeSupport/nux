@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -31,7 +31,7 @@ namespace nux
   class WindowThread;
   class Layout;
   class HLayout;
-  class GLWindowImpl;
+  class GraphicsDisplay;
   class ClientArea;
   class WindowCompositor;
   class AbstractThread;
@@ -78,7 +78,7 @@ namespace nux
       m_WindowTitle = WindowTitle;
     }
 
-    GLWindowImpl &GetWindow() const
+    GraphicsDisplay &GetWindow() const
     {
       return *m_GLWindow;
     }
@@ -129,12 +129,20 @@ namespace nux
 
     // Layout
 
-    //! This list contains the layout that need to be recomputed following the resizing of one of the sub element.
+    //! Schedule a size computation cycle on an area before the rendering is performed.
     /*!
-        This list contains the layout that need to be recomputed following the resizing of one of the sub element.
+        This list contains the area whose size need to be computed.
+        @param area The object that will perform a size computation cycle.
+        \sa RefreshLayout.
     */
-    void AddObjectToRefreshList (Area *bo);
-    void RemoveObjectFromRefreshList (Area *bo);
+    void AddObjectToRefreshList (Area *area);
+
+    //! Remove an area from the list of object whose size was scheduled to be computed before the rendering cycle.
+    /*!
+        @param area The object to remove form the list.
+        \sa RefreshLayout, AddObjectToRefreshList.
+    */
+    void RemoveObjectFromRefreshList (Area *area);
 
     //! Empty the list that contains the layout that need to be recomputed following the resizing of one of the sub element.
     /*!
@@ -142,6 +150,12 @@ namespace nux
     */
     void EmptyLayoutRefreshList();
 
+    //! Execute the size computation cycle on objects.
+    /*
+        The objects whose size is to be computed are added to a list with a call to AddObjectToRefreshList.
+        Size computation is performed just before the rendering cycle.
+        \sa AddObjectToRefreshList
+    */
     void RefreshLayout();
 
     //! Return true if we are computing any layout that is part of this window.
@@ -299,7 +313,70 @@ namespace nux
     // quits the main loop.
     void NuxMainLoopQuit ();
 
+    // Automation
+
+#if defined (NUX_OS_WINDOWS)
+    /*!
+       Used by an external thread to push a fake event for processing.
+       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
+       
+       @param xevent Simulated XEvent
+       @return True if the fake event was successfully registered for later processing.
+    */
+    bool PumpFakeEventIntoPipe (WindowThread* window_thread, INPUT *win_event);
+    
+    INPUT _fake_event;
+#elif defined (NUX_OS_LINUX)
+    /*!
+       Used by an external thread to push a fake event for processing.
+       Start a 0 delay timer with a call back to ReadyFakeEventProcessing.
+       
+       @param xevent Simulated XEvent
+       @return True if the fake event was successfully registered for later processing.
+    */
+    bool PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent);
+    
+    XEvent _fake_event;
+#endif
+    
+    /*!
+        Enable the processing of fake events set through PumpFakeEventIntoPipe.
+        Disable the processing of mouse up/down events coming from the display server.
+        Process other mouse events normaly.
+        
+        @param enable True to enable fake events.
+        \sa InFakeEventMode
+    */
+    void SetFakeEventMode (bool enable);
+    
+    /*!
+        Return True if the system is in accepting fake events.
+        
+        @return True if the fake event mode is active.
+
+    */
+    bool InFakeEventMode () const;
+
+    /*!
+        Called when the timer set in PumpFakeEventIntoPipe expires.This is the signal that the main 
+        thread is ready to process the fake event.
+    */
+    void ReadyFakeEventProcessing (void*);
+    
+    /*!
+        Fake events are processed one after the other. While this function return false,
+        PumpFakeEventIntoPipe should not be called.
+    */
+    bool ReadyForNextFakeEvent () const;
+
+    bool _ready_for_next_fake_event;
+    bool _processing_fake_event;
+    bool _fake_event_mode;
+    TimerFunctor *_fake_event_call_back;
+    TimerHandle _fake_event_timer;
+
   protected:
+    
     void AsyncWakeUpCallback (void*);
 
     //void SetModalWindow(bool b) {m_bIsModal = b;}
@@ -382,7 +459,7 @@ namespace nux
     BasePainter     *m_Painter;
     TimerHandler    *m_TimerHandler;
 
-    GLWindowImpl *m_GLWindow;
+    GraphicsDisplay *m_GLWindow;
     GraphicsEngine *m_GraphicsContext;
     WindowCompositor *m_window_compositor;
     std::list<NThread *> m_ThreadList;
@@ -419,24 +496,24 @@ namespace nux
     friend class TimerHandler;
 
     friend WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                          UINT width,
-                                          UINT height,
+                                          t_u32 width,
+                                          t_u32 height,
                                           WindowThread *Parent,
                                           ThreadUserInitFunc UserInitFunc,
                                           void *InitData);
 
     friend WindowThread *CreateWindowThread (WindowStyle WndStyle,
         const TCHAR *WindowTitle,
-        UINT width,
-        UINT height,
+        t_u32 width,
+        t_u32 height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
 
     friend WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
         const TCHAR *WindowTitle,
-        UINT width,
-        UINT height,
+        t_u32 width,
+        t_u32 height,
         WindowThread *Parent,
         ThreadUserInitFunc UserInitFunc,
         void *InitData);
@@ -451,7 +528,7 @@ namespace nux
         void *InitData);
 #endif
 
-    SystemThread *CreateSimpleThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
+    friend SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
 
   };
 

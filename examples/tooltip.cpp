@@ -14,7 +14,7 @@
  * version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -27,7 +27,6 @@
 #include "Nux/Button.h"
 #include "NuxGraphics/GraphicsEngine.h"
 #include "NuxGraphics/Events.h"
-#include "NuxGraphics/GfxSetupX11.h"
 #include "Nux/TextureArea.h"
 #include "NuxImage/CairoGraphics.h"
 

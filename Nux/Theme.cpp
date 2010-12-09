@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -316,8 +316,8 @@ namespace nux
     {
       if ( (*it)->style == style)
       {
-        UINT width = (*it)->texture->GetWidth();
-        UINT height = (*it)->texture->GetHeight();
+        t_u32 width = (*it)->texture->GetWidth();
+        t_u32 height = (*it)->texture->GetHeight();
         return Rect (0, 0, width, height);
       }
     }

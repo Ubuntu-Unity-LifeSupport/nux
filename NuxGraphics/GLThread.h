@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -26,11 +26,11 @@
 // namespace nux
 // {
 // 
-//   class GLWindowImpl;
+//   class GraphicsDisplay;
 //   class GpuDevice;
 //   class GraphicsEngine;
 // 
-//   GLWindowImpl *GetThreadGLWindow();
+//   GraphicsDisplay *GetThreadGLWindow();
 //   GpuDevice *GetThreadGLDeviceFactory();
 //   GraphicsEngine *GetThreadGraphicsContext();
 // 

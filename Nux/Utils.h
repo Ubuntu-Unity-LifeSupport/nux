@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -47,13 +47,17 @@ namespace nux
 //    eSpace     = (1L) << 6,
 //};
 
-  enum EventTraverseInfo
+  typedef enum
   {
-    eSolveNone          = (0L),
-    eMouseEventSolved   = (1L),
-    eKeyEventSolved     = (1L) << 1,
-    eDoNotProcess       = (1L) << 2,
-  };
+    eSolveNone                      = (0L),
+    eMouseEventSolved               = (1L),
+    eKeyEventSolved                 = (1L) << 1,
+    eDoNotProcess                   = (1L) << 2,
+    EVENT_CYCLE_EXCLUSIVE           = (1L) << 3,  //!< Value of ProcessEventInfo when processing the event cycle of the input area that has the exclusivity.
+    EVENT_CYCLE_EXCLUSIVE_CONTINUE  = (1L) << 4,  //!< Return value of the cycle of the exclusive input area. If it is returned, allow other areas to process the event.
+    EVENT_CYCLE_SOLVED              = (1L) << 5,
+    EVENT_CYCLE_DO_NOT_PROCESS      = (1L) << 6,
+  } EventCycleStatus;
 
   enum PositionPolicy
   {

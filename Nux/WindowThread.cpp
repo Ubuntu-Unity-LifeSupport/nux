@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -29,9 +29,9 @@
 #include "WindowCompositor.h"
 #include "SystemThread.h"
 #include "FloatingWindow.h"
-//#include "Timeline.h"
 
 #include "WindowThread.h"
+
 namespace nux
 {
   
@@ -312,7 +312,9 @@ namespace nux
     dd->window_thread->_inside_timer_loop = false;
 
     if(dd->window_thread->IsEmbeddedWindow())
-        dd->window_thread->RedrawRequested.emit();
+    {
+      dd->window_thread->RedrawRequested.emit();
+    }
     else
     {
       dd->window_thread->ExecutionLoop(0);
@@ -417,6 +419,13 @@ namespace nux
     _inside_timer_loop = false;
     _async_wake_up_functor = new TimerFunctor();
     _async_wake_up_functor->OnTimerExpired.connect (sigc::mem_fun (this, &WindowThread::AsyncWakeUpCallback) );
+
+
+    _fake_event_call_back = new TimerFunctor();
+    _fake_event_call_back->OnTimerExpired.connect (sigc::mem_fun (this, &WindowThread::ReadyFakeEventProcessing));
+    _ready_for_next_fake_event = true;
+    _fake_event_mode = false;
+    _processing_fake_event = false;
   }
 
   WindowThread::~WindowThread()
@@ -427,16 +436,81 @@ namespace nux
     {
       (*li)->UnReference ();
     }
+    
     delete _Timelines;
+    delete _async_wake_up_functor;
+    delete _fake_event_call_back;
   }
 
   void WindowThread::AsyncWakeUpCallback (void* data)
   {
     GetTimer ().RemoveTimerHandler (_async_wake_up_timer);
     _pending_wake_up_timer = false;
+  }
+  
+  void WindowThread::SetFakeEventMode (bool enable)
+  {
+    _fake_event_mode = enable;
+  }
+  
+  bool WindowThread::InFakeEventMode () const
+  {
+    return _fake_event_mode;
+  }
+  
+  bool WindowThread::ReadyForNextFakeEvent () const
+  {
+    return _ready_for_next_fake_event;
+  }
+  
+#if defined (NUX_OS_WINDOWS)
+  bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, INPUT *win_event)
+  {
+    if (!_fake_event_mode)
+    {
+      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled."));
+      return false;
+    }
     
-    WindowThread* window_thread = NUX_STATIC_CAST(WindowThread*, data);
-    window_thread->ExecutionLoop(0);
+    if (!_ready_for_next_fake_event)
+    {
+      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time."));
+      return false;
+    }
+    
+    _ready_for_next_fake_event = false;
+//     _fake_event = *xevent;
+//     _fake_event.xany.window = this->GetWindow ().GetWindowHandle ();
+    _fake_event_timer = this->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
+    return true;
+  }
+#elif defined (NUX_OS_LINUX)
+  bool WindowThread::PumpFakeEventIntoPipe (WindowThread* window_thread, XEvent *xevent)
+  {
+    if (!_fake_event_mode)
+    {
+      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] Cannot register a fake event. Fake event mode is not enabled."));
+      return false;
+    }
+
+    if (!_ready_for_next_fake_event)
+    {
+      nuxDebugMsg (TEXT("[WindowThread::PumpFakeEventIntoPipe] The fake event pipe is full. Only one fake event can be registered at any time."));
+      return false;
+    }
+
+    _ready_for_next_fake_event = false;
+    _fake_event = *xevent;
+    _fake_event.xany.window = this->GetWindow ().GetWindowHandle ();
+    _fake_event_timer = this->GetTimerHandler().AddTimerHandler (0, _fake_event_call_back, this, this);
+    return true;
+  }
+#endif
+
+  void WindowThread::ReadyFakeEventProcessing (void* data)
+  {
+    nuxDebugMsg (TEXT("[WindowThread::ReadyFakeEventProcessing] Ready to process fake event."));
+    _processing_fake_event = true;
   }
   
   void WindowThread::SetLayout (Layout *layout)
@@ -709,7 +783,7 @@ namespace nux
       }
       else
       {
-        // Do not sleep. Just return and let the GLWindowImpl::SwapBuffer do the sleep if necessary.
+        // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
       }
     }
 
@@ -730,14 +804,13 @@ namespace nux
 
     if (!IsEmbeddedWindow() && GetWindow().IsPauseThreadGraphicsRendering() )
     {
-      // Do not sleep. Just return and let the GLWindowImpl::SwapBuffer do the sleep if necessary.
+      // Do not sleep. Just return and let the GraphicsDisplay::SwapBuffer do the sleep if necessary.
       return 0;
     }
 
     WindowThread *Application = GetGraphicsThread();
 
 #if (!defined(NUX_OS_LINUX) && !defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) || defined(NUX_DISABLE_GLIB_LOOP)
-
     while (KeepRunning)
 #endif
     {
@@ -749,11 +822,39 @@ namespace nux
       }
       else
       {
-          ms = GetWindow().GetFrameTime();
+        ms = GetWindow().GetFrameTime();
       }
 
       memset(&event, 0, sizeof(IEvent));
       GetWindow().GetSystemEvent(&event);
+      
+#if defined(NUX_OS_LINUX)
+      // Automation and fake event inputs
+      if (_fake_event_mode && _processing_fake_event)
+      {
+        // Cancel the real X event and inject the fake event instead. This is wrong and should be improved.
+        memset(&event, 0, sizeof(IEvent));
+        
+        GetWindow().InjectXEvent(&event, _fake_event);
+        
+        if (event.e_event == NUX_MOUSE_PRESSED)
+        {
+          nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Down."));
+        }
+        else if (event.e_event == NUX_MOUSE_RELEASED)
+        {
+          nuxDebugMsg (TEXT("[WindowThread::ExecutionLoop] Fake Event: Mouse Up."));
+        }
+      }
+      else if (_fake_event_mode)
+      {
+        // In fake event mode we don't allow X mouse up/down events.
+        if ((event.e_event == NUX_MOUSE_PRESSED) || (event.e_event == NUX_MOUSE_RELEASED))
+        {
+          event.e_event = NUX_NO_EVENT;
+        }
+      }
+#endif
 
       if(event.e_event ==	NUX_TERMINATE_APP || (this->GetThreadState() == THREADSTOP))
       {
@@ -941,6 +1042,15 @@ namespace nux
         m_size_configuration_event = false;
       }
     }
+
+#if defined(NUX_OS_LINUX)
+      // Automation and fake event inputs
+      if (_processing_fake_event)
+      {
+        _processing_fake_event = false;
+        _ready_for_next_fake_event = true;
+      }
+#endif
 
     return 1;
   }
@@ -1202,7 +1312,7 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GLWindowImpl *ParentWindow = 0;
+    GraphicsDisplay *ParentWindow = 0;
 
     if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -1255,7 +1365,7 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GLWindowImpl *ParentWindow = 0;
+    GraphicsDisplay *ParentWindow = 0;
 
     if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -1311,7 +1421,7 @@ namespace nux
     }
 
     inlSetThreadLocalStorage (ThreadLocal_InalogicAppImpl, this);
-    GLWindowImpl *ParentWindow = 0;
+    GraphicsDisplay *ParentWindow = 0;
 
     if (m_Parent && static_cast<WindowThread *> (m_Parent)->Type().IsObjectType (WindowThread::StaticObjectType) )
     {
@@ -1680,3 +1790,4 @@ namespace nux
   }
 
 }
+

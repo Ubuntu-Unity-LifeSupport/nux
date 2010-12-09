@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -55,6 +55,12 @@ namespace nux
 
   long View::BaseProcessEvent (IEvent &ievent, long TraverseInfo, long ProcessEventInfo)
   {
+    if ((GetWindowCompositor ().GetExclusiveInputArea () == this) && (!(ProcessEventInfo & EVENT_CYCLE_EXCLUSIVE)))
+    {
+      // Skip the area that has the exclusivity on events
+      return TraverseInfo;
+    }
+
     return ProcessEvent (ievent, TraverseInfo, ProcessEventInfo);
   }
 

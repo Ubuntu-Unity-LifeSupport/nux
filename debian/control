@@ -31,6 +31,17 @@ Description: Visual rendering toolkit for real-time applications - shared lib
  .
  This package contains shared libraries to be used by applications.
 
+Package: nux-tools
+Section: x11
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: Visual rendering toolkit for real-time applications - tools
+ Nux is a graphical user interface toolkit for applications that mixes opengl
+ hardware acceleration with high quality visual rendering.
+ .
+ This package contains various tools for nux
+
 Package: libnux-0.9-dev
 Section: libdevel
 Architecture: any

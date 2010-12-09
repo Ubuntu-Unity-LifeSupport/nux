@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -30,8 +30,6 @@
 #include "GLDeviceFrameBufferObject.h"
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
-
-#define MANAGEDEVICERESOURCE    0
 
 namespace nux
 {
@@ -53,8 +51,6 @@ namespace nux
       IOpenGLVertexBuffer **ppVertexBuffer)
   {
     *ppVertexBuffer = new IOpenGLVertexBuffer (Length, Usage, NUX_TRACKER_LOCATION);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexBuffer> > (IntrusiveSP<IOpenGLVertexBuffer> (*ppVertexBuffer), &_CachedVertexBufferList);
 
     return OGL_OK;
   }
@@ -78,8 +74,6 @@ namespace nux
   {
     *ppIndexBuffer = new IOpenGLIndexBuffer (Length, Usage, Format, NUX_TRACKER_LOCATION);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLIndexBuffer> > (IntrusiveSP<IOpenGLIndexBuffer> (*ppIndexBuffer), &_CachedIndexBufferList);
-
     return OGL_OK;
   }
 
@@ -96,8 +90,6 @@ namespace nux
       IOpenGLPixelBufferObject **ppPixelBufferObject)
   {
     *ppPixelBufferObject = new IOpenGLPixelBufferObject (Size, Usage, NUX_TRACKER_LOCATION);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLPixelBufferObject> > (IntrusiveSP<IOpenGLPixelBufferObject> (*ppPixelBufferObject), &_CachedPixelBufferObjectList);
 
     return OGL_OK;
   }
@@ -116,8 +108,6 @@ namespace nux
       IOpenGLVertexDeclaration **ppDecl)
   {
     *ppDecl = new IOpenGLVertexDeclaration (pVertexElements);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVertexDeclaration> > (IntrusiveSP<IOpenGLVertexDeclaration> (*ppDecl), &_CachedVertexDeclarationList);
 
     return OGL_OK;
   }
@@ -318,7 +308,7 @@ namespace nux
       VERTEXELEMENT vtxelement = *VertexDeclaration->_DeclarationsArray[decl];
       int vtxInput = sVertexInputMap[vtxelement.Usage + vtxelement.UsageIndex];
 
-      nuxAssert (vtxInput < GetOpenGLMaxVertexAttributes() );
+      nuxAssert (vtxInput < GetGpuInfo().GetMaxFboAttachment());
       // Eneble the vertex attribute (0 to 10)
       glEnableVertexAttribArrayARB ( vtxInput );
       // Bind the vertex buffer

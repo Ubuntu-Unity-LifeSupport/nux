@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -61,7 +61,7 @@ namespace nux
 #define NUX_THREADMSG_THREAD_TERMINATED         (WM_APP+3)  // Set wParam = Thread ID, lParam = 0
 
 // This will become GLWindow
-  class GLWindowImpl : public GraphicSystem
+  class GraphicsDisplay : public GraphicSystem
   {
     friend class GraphicsEngine;
 
@@ -73,6 +73,7 @@ namespace nux
 
     int         m_ParentWindow;
     GLXContext  m_GLCtx;
+    GLXFBConfig _fb_config;
     XSetWindowAttributes m_X11Attr;
 
     int m_NumVideoModes;
@@ -84,10 +85,11 @@ namespace nux
     Colormap        m_X11Colormap;
     int             m_BorderPixel;
 
-    int m_X11VerMajor;
-    int m_X11VerMinor;
-    int m_GLXVerMajor;
-    int m_GLXVerMinor;
+    int _x11_major;
+    int _x11_minor;
+    int _glx_major;
+    int _glx_minor;
+    bool _has_glx_13;
 
     XEvent m_X11LastEvent;
     Bool m_X11RepeatKey;
@@ -144,7 +146,7 @@ namespace nux
       unsigned int WindowWidth,
       unsigned int WindowHeight,
       WindowStyle Style,
-      const GLWindowImpl *Parent,
+      const GraphicsDisplay *Parent,
       bool FullscreenFlag = false);
 
     //! Create a GLWindow from a display and window created externally.
@@ -170,6 +172,15 @@ namespace nux
 
     // Event methods
     void GetSystemEvent (IEvent *evt);
+
+    // Os specific
+    int GetGlXMajor () const;
+    int GetGlXMinor () const;
+
+#if defined (NUX_OS_LINUX)
+    void InjectXEvent (IEvent *evt, XEvent xevent);
+#endif
+    
     IEvent &GetCurrentEvent();
 
     bool isWindowMinimized() const
@@ -250,7 +261,7 @@ namespace nux
     WindowStyle m_Style;
 
   public:
-    ~GLWindowImpl();
+    ~GraphicsDisplay();
     GLEWContext *GetGLEWContext()
     {
       return &m_GLEWContext;
@@ -284,10 +295,10 @@ namespace nux
     std::vector<NString> m_UITextureSearchPath;
     FilePath m_ResourcePathLocation;
 
-    GLWindowImpl();
-    GLWindowImpl (const GLWindowImpl &);
+    GraphicsDisplay();
+    GraphicsDisplay (const GraphicsDisplay &);
     // Does not make sense for a singleton. This is a self assignment.
-    GLWindowImpl &operator= (const GLWindowImpl &);
+    GraphicsDisplay &operator= (const GraphicsDisplay &);
 
     GLEWContext m_GLEWContext;
     GLXEWContext m_GLXEWContext;

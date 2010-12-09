@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -32,9 +32,6 @@
 #include "NuxGraphics/Events.h"
 #endif
 
-
-#define INPUT
-#define OUTPUT
 
 #define FOCUSNONE -1
 
@@ -122,6 +119,12 @@ namespace nux
 
   private:
 
+    //! Event processing in exclusive mode.
+    /*!
+        Bypass OnEvent and performs a simplified event processing mechanism.
+    */
+    long ProcessEventInExclusiveMode (IEvent &ievent, long TraverseInfo, long ProcessEventInfo);
+
     //! Color of the CoreArea
     /*
         Color of the CoreArea use to draw a colored quad when OnDraw() is called.
@@ -138,6 +141,8 @@ namespace nux
     bool m_CaptureMouseDownAnyWhereElse;
     bool m_EnableDoubleClick;
     bool m_EnableUserKeyboardProcessing;
+
+    bool _print_event_debug_trace;
 
   public:
     sigc::signal<void, int, int, int, int, unsigned long, unsigned long> OnMouseMove;  // send the current position inside the area

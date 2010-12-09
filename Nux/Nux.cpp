@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -39,8 +39,8 @@ namespace nux
   }
 
   static WindowThread *_CreateModalWindowThread (const TCHAR *WindowTitle,
-      UINT width,
-      UINT height,
+      t_u32 width,
+      t_u32 height,
       WindowThread *Parent,
       ThreadUserInitFunc UserInitFunc,
       void *InitData,
@@ -59,8 +59,8 @@ namespace nux
   }
 
   WindowThread *CreateGUIThread (const TCHAR *WindowTitle,
-                                 UINT width,
-                                 UINT height,
+                                 t_u32 width,
+                                 t_u32 height,
                                  WindowThread *Parent,
                                  ThreadUserInitFunc UserInitFunc,
                                  void *InitData)
@@ -159,8 +159,8 @@ namespace nux
 // Create a window thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateWindowThread (WindowStyle WndStyle,
                                     const TCHAR *WindowTitle,
-                                    UINT width,
-                                    UINT height,
+                                    t_u32 width,
+                                    t_u32 height,
                                     WindowThread *Parent,
                                     ThreadUserInitFunc UserInitFunc,
                                     void *InitData)
@@ -185,8 +185,8 @@ namespace nux
 // Create modal graphics thread that is a child of the Parent. This thread has a window.
   WindowThread *CreateModalWindowThread (WindowStyle WndStyle,
                                          const TCHAR *WindowTitle,
-                                         UINT width,
-                                         UINT height,
+                                         t_u32 width,
+                                         t_u32 height,
                                          WindowThread *Parent,
                                          ThreadUserInitFunc UserInitFunc,
                                          void *InitData)
@@ -208,10 +208,20 @@ namespace nux
     return w;
   }
 
-  SystemThread *CreateSimpleThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData)
+  SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData)
   {
-    SystemThread *simpleThread = new SystemThread (Parent);
-    return static_cast<SystemThread *> (simpleThread);
+    SystemThread *system_thread = new SystemThread (Parent);
+    
+    if (system_thread == 0)
+    {
+      nuxAssertMsg (0, TEXT ("[CreateSimpleThread] SystemThread creation failed.") );
+      return 0;
+    }
+    system_thread->m_UserInitFunc = UserInitFunc;
+    system_thread->m_UserExitFunc = 0;
+    system_thread->m_InitData = InitData;
+    system_thread->m_ExitData = 0;
+    return system_thread;
   }
 
   bool RegisterNuxThread (NThread *ThreadPtr)
@@ -315,7 +325,7 @@ namespace nux
     return NUX_STATIC_CAST (WindowThread *, thread)->GetTimerHandler();
   }
 
-  GLWindowImpl& GetWindow()
+  GraphicsDisplay& GetWindow()
   {
     NThread *thread = GetThreadApplication();
     return NUX_STATIC_CAST (WindowThread *, thread)->GetWindow();

@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -235,7 +235,7 @@ namespace nux
     NString FrgShaderCode;
     m_ColorChannel = cc;
 
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL) )
+    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       switch (m_ColorChannel)
       {
@@ -367,7 +367,7 @@ namespace nux
       x + width,  y,          0.0f, 1.0f,
     };
 
-    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGraphicsBoardVendor() != BOARD_INTEL) )
+    if (!USE_ARB_SHADERS && (GetThreadGLDeviceFactory()->GetGPUBrand() != GPU_BRAND_INTEL) )
     {
       CHECKGL (glBindBufferARB (GL_ARRAY_BUFFER_ARB, 0) );
       CHECKGL (glBindBufferARB (GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );

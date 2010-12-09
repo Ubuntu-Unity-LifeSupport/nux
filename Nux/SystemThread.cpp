@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -24,9 +24,9 @@
 
 #include "Layout.h"
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_OpenGL.h"
+#include "NuxGraphics/GraphicsDisplay.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxSetupX11.h"
+#include "NuxGraphics/GraphicsDisplay.h"
 #endif
 #include "NuxGraphics/GraphicsEngine.h"
 #include "ClientArea.h"
@@ -52,7 +52,7 @@ namespace nux
   {
   }
 
-  ThreadState SystemThread::Start ( void *arg )
+  ThreadState SystemThread::Start (void *arg)
   {
     if (!m_Parent)
     {
@@ -71,7 +71,7 @@ namespace nux
     }
   }
 
-  UINT SystemThread::Run (void *arg)
+  t_u32 SystemThread::Run (void *arg)
   {
     if (m_UserInitFunc)
     {

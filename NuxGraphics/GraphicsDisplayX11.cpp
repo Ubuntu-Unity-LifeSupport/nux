@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -32,39 +32,14 @@
 #include "Events.h"
 #include "IniFile.h"
 
-#include "GfxSetupX11.h"
+#include "GraphicsDisplay.h"
 
 namespace nux
 {
 
   unsigned int gVirtualKeycodeState[NUX_MAX_VK];
 
-// Attributes for a single buffered visual in RGBA format
-  static int g_DoubleBufferVisual[] =
-  {
-    GLX_RGBA,
-    GLX_DOUBLEBUFFER,
-    GLX_RED_SIZE,       8,
-    GLX_GREEN_SIZE,     8,
-    GLX_BLUE_SIZE,      8,
-    GLX_ALPHA_SIZE,     8,
-    GLX_DEPTH_SIZE,     24,
-    GLX_STENCIL_SIZE,   8,
-    None
-  };
-
-// Attributes for a single buffered visual in RGBA format
-// static int g_SingleBufferVisual[] = {
-//     GLX_RGBA,
-//     GLX_RED_SIZE,       8,
-//     GLX_GREEN_SIZE,     8,
-//     GLX_BLUE_SIZE,      8,
-//     GLX_ALPHA_SIZE,     8,
-//     GLX_DEPTH_SIZE,     24,
-//     GLX_STENCIL_SIZE,   8,
-//     None };
-
-// Compute the frame rate every FRAME_RATE_PERIODE;
+  // Compute the frame rate every FRAME_RATE_PERIODE;
 #define FRAME_RATE_PERIODE    10
 
 #define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
@@ -87,9 +62,8 @@ namespace nux
     {NUX_TERMINATE_APP,          TEXT ("NUX_TERMINATE_APP") }
   };
 
-//---------------------------------------------------------------------------------------------------------
 
-  GLWindowImpl::GLWindowImpl()
+  GraphicsDisplay::GraphicsDisplay()
   {
     m_ParentWindow                  = 0;
     m_GLCtx                         = 0;
@@ -117,10 +91,12 @@ namespace nux
 
     // A window never starts in a minimized state.
     m_is_window_minimized = false;
+    _has_glx_13 = false;
+    _glx_major = 0;
+    _glx_minor = 0;
   }
 
-//---------------------------------------------------------------------------------------------------------
-  GLWindowImpl::~GLWindowImpl()
+  GraphicsDisplay::~GraphicsDisplay()
   {
     NUX_SAFE_DELETE ( m_GraphicsContext );
     NUX_SAFE_DELETE ( m_DeviceFactory );
@@ -131,14 +107,13 @@ namespace nux
     inlSetThreadLocalStorage (ThreadLocal_GLWindowImpl, 0);
   }
 
-//---------------------------------------------------------------------------------------------------------
-  NString GLWindowImpl::FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString GraphicsDisplay::FindResourceLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
   {
     NString path = m_ResourcePathLocation.GetFile (ResourceFileName);
 
     if (path == TEXT ("") && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GLWindowImpl::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
       /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
           TEXT("Failed to locate resource file %s.\nThe program will exit."), ResourceFileName);*/
       exit (1);
@@ -147,7 +122,7 @@ namespace nux
     return path;
   }
 
-  NString GLWindowImpl::FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString GraphicsDisplay::FindUITextureLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath (m_UITextureSearchPath);
@@ -155,7 +130,7 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GLWindowImpl::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
       /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
           TEXT("Failed to locate ui texture file %s.\nThe program will exit."), ResourceFileName);*/
       exit (1);
@@ -164,7 +139,7 @@ namespace nux
     return path;
   }
 
-  NString GLWindowImpl::FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString GraphicsDisplay::FindShaderLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath (m_ShaderSearchPath);
@@ -172,7 +147,7 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GLWindowImpl::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
       /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
           TEXT("Failed to locate shader file %s.\nThe program will exit."), ResourceFileName);*/
       exit (1);
@@ -181,7 +156,7 @@ namespace nux
     return path;
   }
 
-  NString GLWindowImpl::FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
+  NString GraphicsDisplay::FindFontLocation (const TCHAR *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath (m_FontSearchPath);
@@ -189,7 +164,7 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GLWindowImpl::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
       /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
           TEXT("Failed to locate font file %s.\nThe program will exit."), ResourceFileName);*/
       exit (1);
@@ -199,19 +174,23 @@ namespace nux
   }
 
 
-//---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::IsGfxInterfaceCreated()
+
+  bool GraphicsDisplay::IsGfxInterfaceCreated()
   {
     return m_GfxInterfaceCreated;
   }
 
-//---------------------------------------------------------------------------------------------------------
+  static Bool WaitForNotify( Display *dpy, XEvent *event, XPointer arg )
+  {
+    return (event->type == MapNotify) && (event->xmap.window == (Window) arg);
+  }
+
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
-  bool GLWindowImpl::CreateOpenGLWindow (const TCHAR *WindowTitle,
+  bool GraphicsDisplay::CreateOpenGLWindow (const TCHAR *WindowTitle,
                                          unsigned int WindowWidth,
                                          unsigned int WindowHeight,
                                          WindowStyle Style,
-                                         const GLWindowImpl *Parent,
+                                         const GraphicsDisplay *Parent,
                                          bool FullscreenFlag)
   {
     NScopeLock Scope (&CreateOpenGLWindow_CriticalSection);
@@ -228,16 +207,17 @@ namespace nux
     m_Fullscreen = FullscreenFlag;  // Set The Global Fullscreen Flag
     m_BestMode = -1;                // assume -1 if the mode is not fullscreen
 
+    // Open The display.
     m_X11Display = XOpenDisplay (0);
 
     if (m_X11Display == 0)
     {
-      nuxDebugMsg (TEXT ("[GLWindowImpl::CreateOpenGLWindow] XOpenDisplay has failed. The window cannot be created.") );
+      nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] XOpenDisplay has failed. The window cannot be created.") );
       return false;
     }
 
     m_X11Screen = DefaultScreen (m_X11Display);
-    XF86VidModeQueryVersion (m_X11Display, &m_X11VerMajor, &m_X11VerMinor);
+    XF86VidModeQueryVersion (m_X11Display, &_x11_major, &_x11_minor);
 
     XF86VidModeGetAllModeLines (m_X11Display, m_X11Screen, &m_NumVideoModes, &m_X11VideoModes);
     m_X11OriginalVideoMode = *m_X11VideoModes[0];
@@ -250,7 +230,7 @@ namespace nux
       for (int num_modes = 0 ; num_modes < m_NumVideoModes; num_modes++)
       {
         if ( (m_X11VideoModes[num_modes]->hdisplay == m_ViewportSize.GetWidth() )
-             && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight() ) )
+          && (m_X11VideoModes[num_modes]->vdisplay == m_ViewportSize.GetHeight() ) )
         {
           mode_supported = true;
           m_BestMode = num_modes;
@@ -264,26 +244,129 @@ namespace nux
       }
     }
 
-    glXQueryVersion (m_X11Display, &m_GLXVerMajor, &m_GLXVerMinor);
-
-    // Get an appropriate visual
-    m_X11VisualInfo = glXChooseVisual (m_X11Display, m_X11Screen, g_DoubleBufferVisual);
-
-    if (m_X11VisualInfo == NULL)
+    // Check support for GLX
+    int dummy0, dummy1;
+    if (!glXQueryExtension(m_X11Display, &dummy0, &dummy1))
     {
-      nuxDebugMsg (TEXT ("[GLWindowImpl::CreateOpenGLWindow] Cannot get appropriate visual.") );
-      return false;
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] GLX is not supported."));
+      exit (-1);
     }
 
-    m_GLCtx = glXCreateContext (m_X11Display, m_X11VisualInfo, 0, GL_TRUE);
+    // Check GLX version
+    glXQueryVersion (m_X11Display, &_glx_major, &_glx_minor);
 
-    m_X11Colormap = XCreateColormap (m_X11Display,
-                                     RootWindow (m_X11Display, m_X11VisualInfo->screen),
-                                     m_X11VisualInfo->visual,
-                                     AllocNone);
+    // FBConfigs support added in GLX version 1.3
+    if (((_glx_major == 1) && (_glx_minor < 3)) || (_glx_major < 1))
+    {
+      _has_glx_13 = false;
+    }
+    else
+    {
+      _has_glx_13 = true;
+    }
 
-    m_X11Attr.border_pixel = 0;
-    m_X11Attr.colormap = m_X11Colormap;
+    _has_glx_13 = false; // force old way. this is temporary...
+ 
+    if (_has_glx_13 == false)
+    {
+      // Find an OpenGL capable visual.
+      static int g_DoubleBufferVisual[] =
+      {
+        GLX_RGBA,
+        GLX_DOUBLEBUFFER,
+        GLX_RED_SIZE,       8,
+        GLX_GREEN_SIZE,     8,
+        GLX_BLUE_SIZE,      8,
+        GLX_ALPHA_SIZE,     8,
+        GLX_DEPTH_SIZE,     24,
+        GLX_STENCIL_SIZE,   8,
+        None
+      };
+
+      m_X11VisualInfo = glXChooseVisual (m_X11Display, m_X11Screen, g_DoubleBufferVisual);
+
+      if (m_X11VisualInfo == NULL)
+      {
+        nuxDebugMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] Cannot get appropriate visual.") );
+        return false;
+      }
+
+      // Create OpenGL Context.
+      m_GLCtx = glXCreateContext (m_X11Display, m_X11VisualInfo, 0, GL_TRUE);
+
+      m_X11Colormap = XCreateColormap (m_X11Display,
+                                       RootWindow (m_X11Display, m_X11VisualInfo->screen),
+                                       m_X11VisualInfo->visual,
+                                       AllocNone);
+    }
+    else
+    {
+        static int DoubleBufferAttributes[] =
+        {
+          //GLX_X_RENDERABLE, True,
+          GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+          GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+          //GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+          GLX_DOUBLEBUFFER,  True,
+          GLX_RED_SIZE,      8,     /* the maximum number of bits per component    */
+          GLX_GREEN_SIZE,    8, 
+          GLX_BLUE_SIZE,     8,
+          //GLX_ALPHA_SIZE,    8,
+          //GLX_DEPTH_SIZE,    24,
+          //GLX_STENCIL_SIZE,  8,
+          None
+        };
+
+        //XSetWindowAttributes  swa;
+        GLXFBConfig           *fbconfigs;
+        //GLXContext            context;
+        //GLXWindow             glxWin;
+        int                   fbcount;
+
+        // Request a double buffer configuration
+        fbconfigs = glXChooseFBConfig (m_X11Display, DefaultScreen (m_X11Display), DoubleBufferAttributes, &fbcount );
+
+        if (fbconfigs == NULL)
+        {
+          nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] glXChooseFBConfig cannot get a supported configuration."));
+          exit (-1);
+        }
+
+        // Select the best config
+        int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+        for (int i = 0; i < fbcount; i++)
+        {
+          XVisualInfo *vi = glXGetVisualFromFBConfig (m_X11Display, fbconfigs[i]);
+          if (vi)
+          {
+            int samp_buf, samples;
+            glXGetFBConfigAttrib (m_X11Display, fbconfigs[i], GLX_SAMPLE_BUFFERS, &samp_buf);
+            glXGetFBConfigAttrib (m_X11Display, fbconfigs[i], GLX_SAMPLES       , &samples);
+
+            nuxDebugMsg (TEXT("Matching fbconfig %d, visual ID 0x%2x: SAMPLE_BUFFERS = %d SAMPLES = %d\n"), i, vi->visualid, samp_buf, samples);
+
+            if (((best_fbc < 0) || samp_buf) && (samples > best_num_samp))
+              best_fbc = i, best_num_samp = samples;
+            if ((worst_fbc < 0) || (!samp_buf) || (samples < worst_num_samp))
+              worst_fbc = i, worst_num_samp = samples;
+          }
+          XFree (vi);
+        }
+
+        _fb_config = fbconfigs[best_fbc];
+
+        XFree (fbconfigs);
+
+        m_X11VisualInfo = glXGetVisualFromFBConfig (m_X11Display, _fb_config);
+
+        m_X11Colormap = XCreateColormap (m_X11Display, RootWindow (m_X11Display, m_X11VisualInfo->screen),
+          m_X11VisualInfo->visual,
+          AllocNone);
+    }
+
+    m_X11Attr.background_pixmap = 0;
+    m_X11Attr.border_pixel      = 0;
+    m_X11Attr.colormap          = m_X11Colormap;
     m_X11Attr.override_redirect = m_Fullscreen;
     m_X11Attr.event_mask =
       // Mouse
@@ -349,7 +432,7 @@ namespace nux
                                    &m_X11Attr);
 
       XWarpPointer (m_X11Display, None, m_X11Window, 0, 0, 0, 0, 0, 0);
-      XMapRaised (m_X11Display, m_X11Window);
+      //XMapRaised (m_X11Display, m_X11Window);
       XGrabKeyboard (m_X11Display, m_X11Window, True,
                      GrabModeAsync,
                      GrabModeAsync,
@@ -379,7 +462,28 @@ namespace nux
       XSetWMProtocols (m_X11Display, m_X11Window, &m_WMDeleteWindow, 1);
 
       XSetStandardProperties (m_X11Display, m_X11Window, WindowTitle, WindowTitle, None, NULL, 0, NULL);
-      XMapRaised (m_X11Display, m_X11Window);
+      //XMapRaised (m_X11Display, m_X11Window);
+    }
+
+    if (0 /*_has_glx_13*/)
+    {
+      XFree (m_X11VisualInfo);
+      m_X11VisualInfo = 0;
+
+      /* Create a GLX context for OpenGL rendering */
+      m_GLCtx = glXCreateNewContext (m_X11Display, _fb_config, GLX_RGBA_TYPE, NULL, True);
+
+      /* Create a GLX window to associate the frame buffer configuration
+      ** with the created X window */
+      GLXWindow glxWin = glXCreateWindow (m_X11Display, _fb_config, m_X11Window, NULL );
+      
+      // Map the window to the screen, and wait for it to appear */
+      XMapWindow (m_X11Display, m_X11Window);
+      XEvent event;
+      XIfEvent (m_X11Display, &event, WaitForNotify, (XPointer) m_X11Window);
+
+      /* Bind the GLX context to the Window */
+      glXMakeContextCurrent (m_X11Display, glxWin, glxWin, m_GLCtx);
     }
 
     MakeGLContextCurrent();
@@ -389,7 +493,14 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+        m_X11Display,
+        m_X11Window,
+        0,
+        _fb_config,
+        m_GLCtx,
+        1, 0, false);
+
     m_GraphicsContext = new GraphicsEngine (*this);
 
     EnableVSyncSwapControl();
@@ -398,7 +509,7 @@ namespace nux
     return TRUE;
   }
 
-  bool GLWindowImpl::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
+  bool GraphicsDisplay::CreateFromOpenGLWindow (Display *X11Display, Window X11Window, GLXContext OpenGLContext)
   {
     // Do not make the opengl context current
     // Do not swap the framebuffer
@@ -423,13 +534,20 @@ namespace nux
 
     m_GfxInterfaceCreated = true;
 
-    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    // m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8);
+    m_DeviceFactory = new GpuDevice (m_ViewportSize.GetWidth(), m_ViewportSize.GetHeight(), BITFMT_R8G8B8A8,
+        m_X11Display,
+        m_X11Window,
+        false,
+        _fb_config,
+        m_GLCtx,
+        1, 0, false);
     m_GraphicsContext = new GraphicsEngine (*this);
 
     return true;
   }
 
-// bool GLWindowImpl::CreateVisual(unsigned int WindowWidth, unsigned int WindowHeight, XVisualInfo& ChosenVisual, XVisualInfo& Template, unsigned long Mask)
+// bool GraphicsDisplay::CreateVisual(unsigned int WindowWidth, unsigned int WindowHeight, XVisualInfo& ChosenVisual, XVisualInfo& Template, unsigned long Mask)
 // {
 //     // Get all the visuals matching the template
 //     Template.screen = m_X11Screen;
@@ -440,7 +558,7 @@ namespace nux
 //     {
 //         if(VisualsArray)
 //             XFree(VisualsArray);
-//         nuxDebugMsg(TEXT("[GLWindowImpl::CreateVisual] There is no matching visuals."));
+//         nuxDebugMsg(TEXT("[GraphicsDisplay::CreateVisual] There is no matching visuals."));
 //         return false;
 //     }
 //
@@ -531,20 +649,28 @@ namespace nux
 //     return true;
 // }
 
-//---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::HasFrameBufferSupport()
+  int GraphicsDisplay::GetGlXMajor () const
   {
-    return m_DeviceFactory->SUPPORT_GL_EXT_FRAMEBUFFER_OBJECT();
+    return _glx_major;
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::GetWindowSize (int &w, int &h)
+  int GraphicsDisplay::GetGlXMinor () const
+  {
+    return _glx_minor;
+  }
+
+  bool GraphicsDisplay::HasFrameBufferSupport()
+  {
+    return m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object ();
+  }
+
+  void GraphicsDisplay::GetWindowSize (int &w, int &h)
   {
     w = m_WindowSize.GetWidth();
     h = m_WindowSize.GetHeight();
   }
 
-  void GLWindowImpl::GetDesktopSize (int &w, int &h)
+  void GraphicsDisplay::GetDesktopSize (int &w, int &h)
   {
     Window root;
     int x, y;
@@ -562,38 +688,33 @@ namespace nux
     }
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetWindowSize (int width, int height)
+  void GraphicsDisplay::SetWindowSize (int width, int height)
   {
-    nuxDebugMsg (TEXT ("[GLWindowImpl::SetWindowSize] Setting window size to %dx%d"), width, height);
+    nuxDebugMsg (TEXT ("[GraphicsDisplay::SetWindowSize] Setting window size to %dx%d"), width, height);
     // Resize window client area
     XResizeWindow (m_X11Display, m_X11Window, width, height);
     XFlush (m_X11Display);
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetWindowPosition (int x, int y)
+  void GraphicsDisplay::SetWindowPosition (int x, int y)
   {
-    nuxDebugMsg (TEXT ("[GLWindowImpl::SetWindowPosition] Setting window position to %dx%d"), x, y);
+    nuxDebugMsg (TEXT ("[GraphicsDisplay::SetWindowPosition] Setting window position to %dx%d"), x, y);
     // Resize window client area
     XMoveWindow (m_X11Display, m_X11Window, x, y);
     XFlush (m_X11Display);
   }
 
-//---------------------------------------------------------------------------------------------------------
-  unsigned int GLWindowImpl::GetWindowWidth()
+  unsigned int GraphicsDisplay::GetWindowWidth()
   {
     return m_WindowSize.GetWidth();
   }
 
-//---------------------------------------------------------------------------------------------------------
-  unsigned int GLWindowImpl::GetWindowHeight()
+  unsigned int GraphicsDisplay::GetWindowHeight()
   {
     return m_WindowSize.GetHeight();
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetViewPort (int x, int y, int width, int height)
+  void GraphicsDisplay::SetViewPort (int x, int y, int width, int height)
   {
 
     if (IsGfxInterfaceCreated() )
@@ -607,7 +728,7 @@ namespace nux
     }
   }
 
-  Point GLWindowImpl::GetMouseScreenCoord()
+  Point GraphicsDisplay::GetMouseScreenCoord()
   {
     Window root_return;
     Window child_return;
@@ -632,7 +753,7 @@ namespace nux
     return Point (root_x_return, root_y_return);
   }
 
-  Point GLWindowImpl::GetMouseWindowCoord()
+  Point GraphicsDisplay::GetMouseWindowCoord()
   {
     Window root_return;
     Window child_return;
@@ -656,49 +777,49 @@ namespace nux
     return Point (win_x_return, win_y_return);
   }
 
-  Point GLWindowImpl::GetWindowCoord()
+  Point GraphicsDisplay::GetWindowCoord()
   {
     XWindowAttributes attrib;
     int status = XGetWindowAttributes (m_X11Display, m_X11Window, &attrib);
 
     if (status == 0)
     {
-      nuxAssert (TEXT ("[GLWindowImpl::GetWindowCoord] Failed to get the window attributes.") );
+      nuxAssert (TEXT ("[GraphicsDisplay::GetWindowCoord] Failed to get the window attributes.") );
       return Point (0, 0);
     }
 
     return Point (attrib.x, attrib.y);
   }
 
-  Rect GLWindowImpl::GetWindowGeometry()
+  Rect GraphicsDisplay::GetWindowGeometry()
   {
     XWindowAttributes attrib;
     int status = XGetWindowAttributes (m_X11Display, m_X11Window, &attrib);
 
     if (status == 0)
     {
-      nuxAssert (TEXT ("[GLWindowImpl::GetWindowGeometry] Failed to get the window attributes.") );
+      nuxAssert (TEXT ("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.") );
       return Rect (0, 0, 0, 0);
     }
 
     return Rect (attrib.x, attrib.y, attrib.width, attrib.height);
   }
 
-  Rect GLWindowImpl::GetNCWindowGeometry()
+  Rect GraphicsDisplay::GetNCWindowGeometry()
   {
     XWindowAttributes attrib;
     int status = XGetWindowAttributes (m_X11Display, m_X11Window, &attrib);
 
     if (status == 0)
     {
-      nuxAssert (TEXT ("[GLWindowImpl::GetWindowGeometry] Failed to get the window attributes.") );
+      nuxAssert (TEXT ("[GraphicsDisplay::GetWindowGeometry] Failed to get the window attributes.") );
       return Rect (0, 0, 0, 0);
     }
 
     return Rect (attrib.x, attrib.y, attrib.width, attrib.height);
   }
 
-  void GLWindowImpl::MakeGLContextCurrent()
+  void GraphicsDisplay::MakeGLContextCurrent()
   {
     if (!glXMakeCurrent (m_X11Display, m_X11Window, m_GLCtx) )
     {
@@ -706,7 +827,7 @@ namespace nux
     }
   }
 
-  void GLWindowImpl::SwapBuffer (bool glswap)
+  void GraphicsDisplay::SwapBuffer (bool glswap)
   {
     // There are a lot of mouse motion events coming from X11. The system processes one event at a time and sleeps
     // if necessary to cap the frame rate to 60 frames per seconds. But while the thread sleeping, there are accumulated
@@ -716,7 +837,7 @@ namespace nux
     // In this case, don't sleep the thread... Swap the framebuffer to see the result of the current single motion event.
     // It maybe worth investigating how to properly balance event processing and drawing in order to keep the
     // frame rate and the responsiveness at acceptable levels.
-    // As a consequence, when the mouse is moving, the frame rate goes beyong 60fps.
+    // As a consequence, when the mouse is moving, the frame rate goes beyond 60fps.
 
     /*bool bsleep = true;
     if(XPending(m_X11Display) > 0)
@@ -725,7 +846,7 @@ namespace nux
         XPeekEvent(m_X11Display, &xevent);
         if(xevent.type == MotionNotify)
         {
-            //nuxDebugMsg(TEXT("[GLWindowImpl::SwapBuffer]: MotionNotify event."));
+            //nuxDebugMsg(TEXT("[GraphicsDisplay::SwapBuffer]: MotionNotify event."));
             bsleep = false;
         }
     }*/
@@ -753,14 +874,14 @@ namespace nux
 //     m_FramePeriodeCounter++;
 //     if(m_FramePeriodeCounter >= FRAME_RATE_PERIODE)
 //     {
-//         //nuxDebugMsg(TEXT("[GLWindowImpl::SwapBuffer] Frametime: %f"), m_FrameTime);
+//         //nuxDebugMsg(TEXT("[GraphicsDisplay::SwapBuffer] Frametime: %f"), m_FrameTime);
 //         m_FrameRate = m_FramePeriodeCounter / (m_PeriodeTime / 1000.0f);
 //         m_PeriodeTime = 0.0f;
 //         m_FramePeriodeCounter = 0;
 //     }
   }
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::DestroyOpenGLWindow()
+
+  void GraphicsDisplay::DestroyOpenGLWindow()
   {
     if (m_GfxInterfaceCreated == true)
     {
@@ -768,7 +889,7 @@ namespace nux
       {
         if (!glXMakeCurrent (m_X11Display, None, NULL) )
         {
-          nuxAssert (TEXT ("[GLWindowImpl::DestroyOpenGLWindow] glXMakeCurrent failed.") );
+          nuxAssert (TEXT ("[GraphicsDisplay::DestroyOpenGLWindow] glXMakeCurrent failed.") );
         }
 
         glXDestroyContext (m_X11Display, m_GLCtx);
@@ -788,7 +909,6 @@ namespace nux
     m_GfxInterfaceCreated = false;
   }
 
-// //---------------------------------------------------------------------------------------------------------
 // // convert a MSWindows VK_x to an INL keysym or and extended INL keysym:
 // static const struct {unsigned short vk, fltk, extended;} vktab[] = {
 //     {NUX_VK_BACK,	    NUX_BackSpace},
@@ -835,7 +955,6 @@ namespace nux
 //     {0xdd,	']'},
 //     {0xde,	'\''}
 // };
-// //---------------------------------------------------------------------------------------------------------
 // static int ms2fltk(int vk, int extended)
 // {
 //     static unsigned short vklut[256];
@@ -870,7 +989,7 @@ namespace nux
 //
 //     return extended ? extendedlut[vk] : vklut[vk];
 // }
-//---------------------------------------------------------------------------------------------------------
+
   static int mouse_move (XEvent xevent, IEvent *m_pEvent)
   {
 //     m_pEvent->e_x = xevent.xmotion.x;
@@ -1024,7 +1143,7 @@ namespace nux
     return state;
   }
 
-  void GLWindowImpl::GetSystemEvent (IEvent *evt)
+  void GraphicsDisplay::GetSystemEvent (IEvent *evt)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
@@ -1119,8 +1238,21 @@ namespace nux
       memcpy (evt, m_pEvent, sizeof (IEvent) );
     }
   }
+  
+#if defined (NUX_OS_LINUX)
+  void GraphicsDisplay::InjectXEvent (IEvent *evt, XEvent xevent)
+  {
+    m_pEvent->Reset();
+    // Erase mouse event and mouse doubleclick states. Keep the mouse states.
+    m_pEvent->e_mouse_state &= 0x0F000000;
+    
+    // We could do some checks here to make sure the xevent is really what it pretends to be.
+    ProcessXEvent (xevent, false);
+    memcpy (evt, m_pEvent, sizeof (IEvent));
+  }
+#endif
 
-  void GLWindowImpl::ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event)
+  void GraphicsDisplay::ProcessForeignX11Event (XEvent *xevent, IEvent *nux_event)
   {
     m_pEvent->Reset();
     // Erase mouse event and mouse doubleclick states. Keep the mouse states.
@@ -1183,17 +1315,17 @@ namespace nux
     }
   }
 
-  IEvent &GLWindowImpl::GetCurrentEvent()
+  IEvent &GraphicsDisplay::GetCurrentEvent()
   {
     return *m_pEvent;
   }
 
-  bool GLWindowImpl::HasXPendingEvent() const
+  bool GraphicsDisplay::HasXPendingEvent() const
   {
     return XPending (m_X11Display) ? true : false;
   }
 
-  void GLWindowImpl::RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
+  void GraphicsDisplay::RecalcXYPosition (Window TheMainWindow, XEvent xevent, int &x_recalc, int &y_recalc)
   {
     int main_window_x = m_WindowPosition.x;
     int main_window_y = m_WindowPosition.y;
@@ -1255,7 +1387,7 @@ namespace nux
     }
   }
 
-  void GLWindowImpl::ProcessXEvent (XEvent xevent, bool foreign)
+  void GraphicsDisplay::ProcessXEvent (XEvent xevent, bool foreign)
   {
     int x_recalc = 0;
     int y_recalc = 0;
@@ -1274,7 +1406,7 @@ namespace nux
           break;
           
         m_pEvent->e_event = NUX_DESTROY_WINDOW;
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: DestroyNotify event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: DestroyNotify event."));
         break;
       }
 
@@ -1284,7 +1416,7 @@ namespace nux
           break;
         
         m_pEvent->e_event = NUX_WINDOW_DIRTY;
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Expose event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: Expose event."));
         break;
       }
 
@@ -1301,7 +1433,7 @@ namespace nux
         m_WindowSize.SetHeight (xevent.xconfigure.height);
         m_WindowPosition.Set (xevent.xconfigure.x, xevent.xconfigure.y);
 
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ConfigureNotify event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ConfigureNotify event."));
         break;
       }
 
@@ -1321,7 +1453,7 @@ namespace nux
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
         m_pEvent->virtual_code = 0;
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: FocusIn event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: FocusIn event."));
         break;
       }
 
@@ -1339,17 +1471,17 @@ namespace nux
         m_pEvent->e_dx = 0;
         m_pEvent->e_dy = 0;
         m_pEvent->virtual_code = 0;
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: FocusOut event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: FocusOut event."));
         break;
       }
 
       case KeyPress:
       {
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: KeyPress event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: KeyPress event."));
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
-        unsigned int inlKeysym = GLWindowImpl::X11KeySymToINL (keysym);
+        unsigned int inlKeysym = GraphicsDisplay::X11KeySymToINL (keysym);
         m_pEvent->VirtualKeycodeState[inlKeysym] = 1;
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
@@ -1362,7 +1494,7 @@ namespace nux
         static char buffer[16];
         m_pEvent->e_text[0] = 0;
 
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: Keysym: %d - %x."), keysym, keysym);
         if (XLookupString (&xevent.xkey, buffer, sizeof (buffer), NULL, &ComposeStatus) )
         {
           m_pEvent->e_text[0] = buffer[0];
@@ -1373,11 +1505,11 @@ namespace nux
 
       case KeyRelease:
       {
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: KeyRelease event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: KeyRelease event."));
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
         keysym = XKeycodeToKeysym (m_X11Display, keycode, 0);
-        unsigned int inlKeysym = GLWindowImpl::X11KeySymToINL (keysym);
+        unsigned int inlKeysym = GraphicsDisplay::X11KeySymToINL (keysym);
         m_pEvent->VirtualKeycodeState[inlKeysym] = 0;
 
         m_pEvent->e_key_modifiers = GetModifierKeyState (xevent.xkey.state);
@@ -1395,7 +1527,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         mouse_press (xevent, m_pEvent);
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ButtonPress event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonPress event."));
         break;
       }
 
@@ -1406,7 +1538,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         mouse_release (xevent, m_pEvent);
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ButtonRelease event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ButtonRelease event."));
         break;
       }
 
@@ -1417,7 +1549,7 @@ namespace nux
         m_pEvent->e_x_root = 0;
         m_pEvent->e_y_root = 0;
         mouse_move (xevent, m_pEvent);
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: MotionNotify event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: MotionNotify event."));
         break;
       }
 
@@ -1427,7 +1559,7 @@ namespace nux
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: LeaveNotify event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: LeaveNotify event."));
         break;
       }
 
@@ -1436,7 +1568,7 @@ namespace nux
         m_pEvent->e_event = NUX_WINDOW_MOUSELEAVE;
         m_pEvent->e_x = x_recalc;
         m_pEvent->e_y = y_recalc;
-        //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: EnterNotify event."));
+        //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: EnterNotify event."));
         break;
       }
 
@@ -1448,7 +1580,7 @@ namespace nux
         if ( (xevent.xclient.format == 32) && ( (xevent.xclient.data.l[0]) == static_cast<long> (m_WMDeleteWindow) ) )
         {
           m_pEvent->e_event = NUX_TERMINATE_APP;
-          //nuxDebugMsg(TEXT("[GLWindowImpl::ProcessXEvents]: ClientMessage event: Close Application."));
+          //nuxDebugMsg(TEXT("[GraphicsDisplay::ProcessXEvents]: ClientMessage event: Close Application."));
         }
 
         break;
@@ -1456,7 +1588,7 @@ namespace nux
     }
   }
 
-  int GLWindowImpl::X11KeySymToINL (int Keysym)
+  int GraphicsDisplay::X11KeySymToINL (int Keysym)
   {
     switch (Keysym)
     {
@@ -1683,130 +1815,95 @@ namespace nux
     }
   };
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::ShowWindow()
+  void GraphicsDisplay::ShowWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_RESTORE);
-#endif
+    XMapWindow (m_X11Display, m_X11Window);
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::HideWindow()
+  void GraphicsDisplay::HideWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_MINIMIZE);
-#endif
+    XUnmapWindow (m_X11Display, m_X11Window);
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::EnterMaximizeWindow()
+  void GraphicsDisplay::EnterMaximizeWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_MAXIMIZE);
-#endif
+
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::ExitMaximizeWindow()
+  void GraphicsDisplay::ExitMaximizeWindow()
   {
-#if defined(_WIN32)
-    ::ShowWindow (hWnd, SW_RESTORE);
-#endif
+
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::SetWindowTitle (const TCHAR *Title)
+  void GraphicsDisplay::SetWindowTitle (const TCHAR *Title)
   {
-#if defined(_WIN32)
-    SetWindowText (hWnd, Title);
-#endif
+    XStoreName(m_X11Display, m_X11Window, TCHAR_TO_ANSI (Title));
   }
 
-//---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::HasVSyncSwapControl() const
+  bool GraphicsDisplay::HasVSyncSwapControl() const
   {
-    return GetThreadGLDeviceFactory()->SUPPORT_WGL_EXT_SWAP_CONTROL();
+    return GetThreadGLDeviceFactory()->GetGpuInfo().Support_EXT_Swap_Control();
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::EnableVSyncSwapControl()
+  void GraphicsDisplay::EnableVSyncSwapControl()
   {
-#if _WIN32
-
-    if (HasVSyncSwapControl() )
-    {
-      wglSwapIntervalEXT (1);
-    }
-
-#endif
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    glXSwapIntervalEXT(m_X11Display, drawable, 1);
   }
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::DisableVSyncSwapControl()
+  void GraphicsDisplay::DisableVSyncSwapControl()
   {
-#if _WIN32
-
-    if (HasVSyncSwapControl() )
-    {
-      wglSwapIntervalEXT (0);
-    }
-
-#endif
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    glXSwapIntervalEXT(m_X11Display, drawable, 0);
   }
 
-  float GLWindowImpl::GetFrameTime() const
+  float GraphicsDisplay::GetFrameTime() const
   {
     return m_FrameTime;
   }
 
-  void GLWindowImpl::ResetFrameTime()
+  void GraphicsDisplay::ResetFrameTime()
   {
     m_Timer.Reset();
   }
 
   /*
-  //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::StartOpenFileDialog(FileDialogOption& fdo)
+  bool GraphicsDisplay::StartOpenFileDialog(FileDialogOption& fdo)
   {
       return Win32OpenFileDialog(GetWindowHandle(), fdo);
   }
 
-  //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::StartSaveFileDialog(FileDialogOption& fdo)
+  bool GraphicsDisplay::StartSaveFileDialog(FileDialogOption& fdo)
   {
       return Win32SaveFileDialog(GetWindowHandle(), fdo);
   }
 
-  //---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::StartColorDialog(ColorDialogOption& cdo)
+  bool GraphicsDisplay::StartColorDialog(ColorDialogOption& cdo)
   {
       return Win32ColorDialog(GetWindowHandle(), cdo);
   }
   */
-//---------------------------------------------------------------------------------------------------------
-  /*void GLWindowImpl::SetWindowCursor(HCURSOR cursor)
+  /*void GraphicsDisplay::SetWindowCursor(HCURSOR cursor)
   {
       m_Cursor = cursor;
   }
 
-  //---------------------------------------------------------------------------------------------------------
-  HCURSOR GLWindowImpl::GetWindowCursor() const
+  HCURSOR GraphicsDisplay::GetWindowCursor() const
   {
       return m_Cursor;
   }*/
 
-//---------------------------------------------------------------------------------------------------------
-  void GLWindowImpl::PauseThreadGraphicsRendering()
+  void GraphicsDisplay::PauseThreadGraphicsRendering()
   {
     m_PauseGraphicsRendering = true;
     MakeGLContextCurrent();
   }
 
-//---------------------------------------------------------------------------------------------------------
-  bool GLWindowImpl::IsPauseThreadGraphicsRendering() const
+  bool GraphicsDisplay::IsPauseThreadGraphicsRendering() const
   {
     return m_PauseGraphicsRendering;
   }
 
 }
+
+

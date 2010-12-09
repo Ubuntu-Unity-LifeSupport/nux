@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -198,7 +198,7 @@ namespace nux
         m_blue->IsRedrawNeeded() ||
         m_alpha->IsRedrawNeeded() )
     {
-      UINT nBackground = table->PushItemBackground (GfxContext, this);
+      t_u32 nBackground = table->PushItemBackground (GfxContext, this);
       Painter.PaintTextLineStatic (GfxContext, GetSysBoldFont() /*GetFont()*/, m_FirstColumnUsableGeometry, row->m_item->GetName(), GetItemTextColor() );
 
       if (m_ItemGeometryVector.size() >= 2)

@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -30,8 +30,6 @@
 #include "GLDeviceFrameBufferObject.h"
 #include "GLTemplatePrimitiveBuffer.h"
 #include "GraphicsEngine.h"
-
-#define MANAGEDEVICERESOURCE    0
 
 namespace nux
 {
@@ -54,7 +52,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
     , IOpenGLTexture2D **ppTexture
     //, HANDLE* pSharedHandle       // no use
     )
@@ -97,8 +94,6 @@ namespace nux
 
     *ppTexture = new IOpenGLTexture2D (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP< IOpenGLTexture2D > > (IntrusiveSP< IOpenGLTexture2D > (*ppTexture), &_CachedTextureList);
-
     return 1;
   }
 
@@ -121,7 +116,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
     , IOpenGLRectangleTexture **ppTexture
     //, HANDLE* pSharedHandle       // no use
     )
@@ -166,7 +160,6 @@ namespace nux
 
     *ppTexture = new IOpenGLRectangleTexture (Width, Height, NumMipLevel, PixelFormat, false, NUX_TRACKER_LOCATION);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLRectangleTexture> > (IntrusiveSP<IOpenGLRectangleTexture> (*ppTexture), &_CachedTextureRectangleList);
 
     return 1;
   }
@@ -188,7 +181,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage    // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool    // no use
     , IOpenGLCubeTexture **ppCubeTexture
     //, HANDLE* pSharedHandle    // no use
     )
@@ -215,8 +207,6 @@ namespace nux
 
     *ppCubeTexture = new IOpenGLCubeTexture (EdgeLength, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLCubeTexture> > (IntrusiveSP<IOpenGLCubeTexture> (*ppCubeTexture), &_CachedCubeTextureList);
-
     return 1;
   }
 
@@ -241,7 +231,6 @@ namespace nux
     , t_u32 Levels
     //, DWORD Usage        // no use
     , BitmapFormat PixelFormat
-    //, D3DPOOL Pool       // no use
     , IOpenGLVolumeTexture **ppVolumeTexture
     //, HANDLE* pSharedHandle       // no use
     )
@@ -268,8 +257,6 @@ namespace nux
 
     *ppVolumeTexture = new IOpenGLVolumeTexture (Width, Height, Depth, NumMipLevel, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLVolumeTexture> > (IntrusiveSP<IOpenGLVolumeTexture> (*ppVolumeTexture), &_CachedVolumeTextureList);
-
     return OGL_OK;
   }
 
@@ -294,8 +281,6 @@ namespace nux
   {
     *ppAnimatedTexture = new IOpenGLAnimatedTexture (Width, Height, Depth, PixelFormat);
 
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLAnimatedTexture> > (IntrusiveSP<IOpenGLAnimatedTexture> (*ppAnimatedTexture), &_CachedAnimatedTextureList);
-
     return OGL_OK;
   }
 
@@ -311,8 +296,6 @@ namespace nux
   int GpuDevice::CreateQuery (QUERY_TYPE Type, IOpenGLQuery **ppQuery)
   {
     *ppQuery = new IOpenGLQuery (Type);
-
-    if (MANAGEDEVICERESOURCE) ManageDeviceResource< IntrusiveSP<IOpenGLQuery> > (IntrusiveSP<IOpenGLQuery> (*ppQuery), &_CachedQueryList);
 
     return OGL_OK;
   }

@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -25,9 +25,9 @@
 #include "IniFile.h"
 #include "GLResourceManager.h"
 #if defined(NUX_OS_WINDOWS)
-  #include "Gfx_OpenGL.h"
+  #include "GraphicsDisplay.h"
 #elif defined(NUX_OS_LINUX)
-  #include "GfxSetupX11.h"
+  #include "GraphicsDisplay.h"
 #endif
 
 namespace nux
@@ -35,24 +35,24 @@ namespace nux
   void NuxGraphicsInitialize()
   {
     inlRegisterThreadLocalIndex (1, ThreadLocal_GLWindowImpl, NULL);
-    inlRegisterThreadLocalIndex (2, ThreadLocal_GLDeviceFactory, NULL);
+    inlRegisterThreadLocalIndex (2, _TLS_GpuDevice_, NULL);
 
     GNuxGraphicsResources.InitializeResources();
   }
 
-  GLWindowImpl *GetThreadGLWindow()
+  GraphicsDisplay *GetThreadGLWindow()
   {
-    return (GLWindowImpl *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
+    return (GraphicsDisplay *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
   }
 
   GpuDevice *GetThreadGLDeviceFactory()
   {
-    return (GpuDevice *) inlGetThreadLocalStorage (ThreadLocal_GLDeviceFactory);
+    return (GpuDevice *) inlGetThreadLocalStorage (_TLS_GpuDevice_);
   }
 
   GraphicsEngine *GetThreadGraphicsContext()
   {
-    GLWindowImpl *glwindow = (GLWindowImpl *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
+    GraphicsDisplay *glwindow = (GraphicsDisplay *) inlGetThreadLocalStorage (ThreadLocal_GLWindowImpl);
     return glwindow->GetGraphicsEngine();
   }
 

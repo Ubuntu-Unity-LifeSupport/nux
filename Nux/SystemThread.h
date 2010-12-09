@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -88,9 +88,10 @@ namespace nux
     // Declare operator adress-of as private
     SystemThread *operator &();
 
-  private:
     NString m_ThreadName;
 
+    friend SystemThread *CreateSystemThread (AbstractThread *Parent, ThreadUserInitFunc UserInitFunc, void *InitData);
+    
     friend class WindowThread;
   };
 

@@ -15,7 +15,7 @@
  * License version 3 along with this program.  If not, see
  * <http://www.gnu.org/licenses/>
  *
- * Authored by: Jay Taoko <jay.taoko_AT_gmail_DOT_com>
+ * Authored by: Jay Taoko <jaytaoko@inalogic.com>
  *
  */
 
@@ -23,9 +23,9 @@
 #include "Nux.h"
 
 #if defined(NUX_OS_WINDOWS)
-#include "NuxGraphics/Gfx_OpenGL.h"
+  #include "NuxGraphics/GraphicsDisplay.h"
 #elif defined(NUX_OS_LINUX)
-#include "NuxGraphics/GfxSetupX11.h"
+  #include "NuxGraphics/GraphicsDisplay.h"
 #endif
 
 #include "NuxGraphics/GraphicsEngine.h"
@@ -130,7 +130,7 @@ namespace nux
 
       // Copy the client frame buffer into the main frame buffer.
       {
-        UINT w, h;
+        t_u32 w, h;
         w = m_MainColorRT->GetWidth();
         h = m_MainColorRT->GetHeight();
         int x = m_ctx.x;

@@ -85,32 +85,33 @@ am__objects_1 = libnux_graphics_@NUX_API_VERSION@_la-Events.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLRectangleTexture.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVertexDeclaration.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLDeviceFrameBufferObject.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolumeTexture.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLIndexBuffer.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLShaderParameter.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GraphicsEngine.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo \
+	libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLCubeTexture.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GlobalGraphicsInitializer.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IniFile.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-FontTexture.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-FontRenderer.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLBaseTexture.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeAsm.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLWindowManager.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GpuDevice.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GpuDeviceShader.lo \
@@ -126,7 +127,6 @@ am__objects_1 = libnux_graphics_@NUX_API_VERSION@_la-Events.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLError.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-RunTimeStats.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVertexBuffer.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLQuery.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLShader.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLGLSLShader.lo \
@@ -394,7 +394,7 @@ source_h = \
   $(srcdir)/Events.h \
   $(srcdir)/FontTexture.h \
   $(srcdir)/FontRenderer.h \
-  $(srcdir)/GfxSetupX11.h \
+  $(srcdir)/GraphicsDisplayX11.h \
   $(srcdir)/Gfx_Interface.h \
   $(srcdir)/GpuDevice.h \
   $(srcdir)/GLDeviceFrameBufferObject.h \
@@ -416,6 +416,7 @@ source_h = \
   $(srcdir)/GLTimer.h \
   $(srcdir)/GLVertexResourceManager.h \
   $(srcdir)/GLWindowManager.h \
+  $(srcdir)/GraphicsDisplay.h \
   $(srcdir)/IniFile.h \
   $(srcdir)/IOpenGLAnimatedTexture.h \
   $(srcdir)/IOpenGLAsmShader.h \
@@ -454,32 +455,33 @@ source_cpp = \
   $(srcdir)/IOpenGLRectangleTexture.cpp \
   $(srcdir)/IOpenGLVertexDeclaration.cpp \
   $(srcdir)/GLDeviceFrameBufferObject.cpp \
-  $(srcdir)/GLSh_ColorPicker.cpp \
   $(srcdir)/RenderingPipeGLSL.cpp \
   $(srcdir)/IOpenGLVolumeTexture.cpp \
   $(srcdir)/IOpenGLIndexBuffer.cpp \
   $(srcdir)/GLShaderParameter.cpp \
   $(srcdir)/GraphicsEngine.cpp \
-  $(srcdir)/GLResource.cpp \
   $(srcdir)/GLDeviceObjects.cpp \
-  $(srcdir)/GLResourceManager.cpp \
   $(srcdir)/GLPBuffer.cpp \
+  $(srcdir)/GLRenderStates.cpp \
+  $(srcdir)/GLResource.cpp \
+  $(srcdir)/GLResourceManager.cpp \
+  $(srcdir)/GLTextureResourceManager.cpp \
+  $(srcdir)/GLTextureStates.cpp \
+  $(srcdir)/GraphicsDisplayX11.cpp \
+  $(srcdir)/GLSh_ColorPicker.cpp \
+  $(srcdir)/GLSh_DrawFunction.cpp \
+  $(srcdir)/GLSh_Fill.cpp \
   $(srcdir)/IOpenGLCubeTexture.cpp \
   $(srcdir)/GlobalGraphicsInitializer.cpp \
   $(srcdir)/IOpenGLAnimatedTexture.cpp \
-  $(srcdir)/GLRenderStates.cpp \
   $(srcdir)/RenderingPipe.cpp \
   $(srcdir)/IniFile.cpp \
   $(srcdir)/FontTexture.cpp \
   $(srcdir)/FontRenderer.cpp \
-  $(srcdir)/GLTextureResourceManager.cpp \
-  $(srcdir)/GLTextureStates.cpp \
   $(srcdir)/IOpenGLVolume.cpp \
   $(srcdir)/IOpenGLBaseTexture.cpp \
   $(srcdir)/RenderingPipeAsm.cpp \
   $(srcdir)/GLWindowManager.cpp \
-  $(srcdir)/GLSh_DrawFunction.cpp \
-  $(srcdir)/GLSh_Fill.cpp \
   $(srcdir)/IOpenGLAsmShader.cpp \
   $(srcdir)/GpuDevice.cpp \
   $(srcdir)/GpuDeviceShader.cpp \
@@ -495,7 +497,6 @@ source_cpp = \
   $(srcdir)/GLError.cpp \
   $(srcdir)/RunTimeStats.cpp \
   $(srcdir)/IOpenGLVertexBuffer.cpp \
-  $(srcdir)/GfxSetupX11.cpp \
   $(srcdir)/IOpenGLQuery.cpp \
   $(srcdir)/GLShader.cpp \
   $(srcdir)/IOpenGLGLSLShader.cpp \
@@ -615,12 +616,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTimer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLVertexResourceManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLWindowManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GlobalGraphicsInitializer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GpuDevice.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GpuDeviceShader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GpuDeviceTexture.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GpuDeviceVertex.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GraphicsEngine.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.Plo@am__quote@
@@ -713,14 +714,6 @@ libnux_graphics_@NUX_API_VERSION@_la-GLDeviceFrameBufferObject.lo: $(srcdir)/GLD
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLDeviceFrameBufferObject.lo `test -f '$(srcdir)/GLDeviceFrameBufferObject.cpp' || echo '$(srcdir)/'`$(srcdir)/GLDeviceFrameBufferObject.cpp
 
-libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo: $(srcdir)/GLSh_ColorPicker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo `test -f '$(srcdir)/GLSh_ColorPicker.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_ColorPicker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLSh_ColorPicker.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo `test -f '$(srcdir)/GLSh_ColorPicker.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_ColorPicker.cpp
-
 libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo: $(srcdir)/RenderingPipeGLSL.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.lo `test -f '$(srcdir)/RenderingPipeGLSL.cpp' || echo '$(srcdir)/'`$(srcdir)/RenderingPipeGLSL.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipeGLSL.Plo
@@ -761,14 +754,6 @@ libnux_graphics_@NUX_API_VERSION@_la-GraphicsEngine.lo: $(srcdir)/GraphicsEngine
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GraphicsEngine.lo `test -f '$(srcdir)/GraphicsEngine.cpp' || echo '$(srcdir)/'`$(srcdir)/GraphicsEngine.cpp
 
-libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo: $(srcdir)/GLResource.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResource.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo `test -f '$(srcdir)/GLResource.cpp' || echo '$(srcdir)/'`$(srcdir)/GLResource.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResource.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResource.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLResource.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo `test -f '$(srcdir)/GLResource.cpp' || echo '$(srcdir)/'`$(srcdir)/GLResource.cpp
-
 libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo: $(srcdir)/GLDeviceObjects.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo `test -f '$(srcdir)/GLDeviceObjects.cpp' || echo '$(srcdir)/'`$(srcdir)/GLDeviceObjects.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.Plo
@@ -776,6 +761,30 @@ libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo: $(srcdir)/GLDeviceObjec
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLDeviceObjects.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLDeviceObjects.lo `test -f '$(srcdir)/GLDeviceObjects.cpp' || echo '$(srcdir)/'`$(srcdir)/GLDeviceObjects.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo: $(srcdir)/GLPBuffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo `test -f '$(srcdir)/GLPBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/GLPBuffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLPBuffer.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo `test -f '$(srcdir)/GLPBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/GLPBuffer.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo: $(srcdir)/GLRenderStates.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo `test -f '$(srcdir)/GLRenderStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLRenderStates.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLRenderStates.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo `test -f '$(srcdir)/GLRenderStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLRenderStates.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo: $(srcdir)/GLResource.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResource.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo `test -f '$(srcdir)/GLResource.cpp' || echo '$(srcdir)/'`$(srcdir)/GLResource.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResource.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResource.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLResource.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLResource.lo `test -f '$(srcdir)/GLResource.cpp' || echo '$(srcdir)/'`$(srcdir)/GLResource.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo: $(srcdir)/GLResourceManager.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo `test -f '$(srcdir)/GLResourceManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLResourceManager.cpp
@@ -785,13 +794,53 @@ libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo: $(srcdir)/GLResourceM
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLResourceManager.lo `test -f '$(srcdir)/GLResourceManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLResourceManager.cpp
 
-libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo: $(srcdir)/GLPBuffer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo `test -f '$(srcdir)/GLPBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/GLPBuffer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.Plo
+libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo: $(srcdir)/GLTextureResourceManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo `test -f '$(srcdir)/GLTextureResourceManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureResourceManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Plo
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLPBuffer.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLTextureResourceManager.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLPBuffer.lo `test -f '$(srcdir)/GLPBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/GLPBuffer.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo `test -f '$(srcdir)/GLTextureResourceManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureResourceManager.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo: $(srcdir)/GLTextureStates.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo `test -f '$(srcdir)/GLTextureStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureStates.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLTextureStates.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo `test -f '$(srcdir)/GLTextureStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureStates.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo: $(srcdir)/GraphicsDisplayX11.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo `test -f '$(srcdir)/GraphicsDisplayX11.cpp' || echo '$(srcdir)/'`$(srcdir)/GraphicsDisplayX11.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GraphicsDisplayX11.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GraphicsDisplayX11.lo `test -f '$(srcdir)/GraphicsDisplayX11.cpp' || echo '$(srcdir)/'`$(srcdir)/GraphicsDisplayX11.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo: $(srcdir)/GLSh_ColorPicker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo `test -f '$(srcdir)/GLSh_ColorPicker.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_ColorPicker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLSh_ColorPicker.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_ColorPicker.lo `test -f '$(srcdir)/GLSh_ColorPicker.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_ColorPicker.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo: $(srcdir)/GLSh_DrawFunction.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo `test -f '$(srcdir)/GLSh_DrawFunction.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_DrawFunction.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLSh_DrawFunction.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo `test -f '$(srcdir)/GLSh_DrawFunction.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_DrawFunction.cpp
+
+libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo: $(srcdir)/GLSh_Fill.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo `test -f '$(srcdir)/GLSh_Fill.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_Fill.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLSh_Fill.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo `test -f '$(srcdir)/GLSh_Fill.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_Fill.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-IOpenGLCubeTexture.lo: $(srcdir)/IOpenGLCubeTexture.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-IOpenGLCubeTexture.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLCubeTexture.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLCubeTexture.lo `test -f '$(srcdir)/IOpenGLCubeTexture.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLCubeTexture.cpp
@@ -816,14 +865,6 @@ libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo: $(srcdir)/IOpenG
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/IOpenGLAnimatedTexture.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAnimatedTexture.lo `test -f '$(srcdir)/IOpenGLAnimatedTexture.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLAnimatedTexture.cpp
-
-libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo: $(srcdir)/GLRenderStates.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo `test -f '$(srcdir)/GLRenderStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLRenderStates.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLRenderStates.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLRenderStates.lo `test -f '$(srcdir)/GLRenderStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLRenderStates.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.lo: $(srcdir)/RenderingPipe.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-RenderingPipe.lo `test -f '$(srcdir)/RenderingPipe.cpp' || echo '$(srcdir)/'`$(srcdir)/RenderingPipe.cpp
@@ -857,22 +898,6 @@ libnux_graphics_@NUX_API_VERSION@_la-FontRenderer.lo: $(srcdir)/FontRenderer.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-FontRenderer.lo `test -f '$(srcdir)/FontRenderer.cpp' || echo '$(srcdir)/'`$(srcdir)/FontRenderer.cpp
 
-libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo: $(srcdir)/GLTextureResourceManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo `test -f '$(srcdir)/GLTextureResourceManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureResourceManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLTextureResourceManager.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.lo `test -f '$(srcdir)/GLTextureResourceManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureResourceManager.cpp
-
-libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo: $(srcdir)/GLTextureStates.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo `test -f '$(srcdir)/GLTextureStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureStates.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLTextureStates.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTextureStates.lo `test -f '$(srcdir)/GLTextureStates.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTextureStates.cpp
-
 libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.lo: $(srcdir)/IOpenGLVolume.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.lo `test -f '$(srcdir)/IOpenGLVolume.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLVolume.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVolume.Plo
@@ -904,22 +929,6 @@ libnux_graphics_@NUX_API_VERSION@_la-GLWindowManager.lo: $(srcdir)/GLWindowManag
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLWindowManager.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLWindowManager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLWindowManager.lo `test -f '$(srcdir)/GLWindowManager.cpp' || echo '$(srcdir)/'`$(srcdir)/GLWindowManager.cpp
-
-libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo: $(srcdir)/GLSh_DrawFunction.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo `test -f '$(srcdir)/GLSh_DrawFunction.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_DrawFunction.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLSh_DrawFunction.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.lo `test -f '$(srcdir)/GLSh_DrawFunction.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_DrawFunction.cpp
-
-libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo: $(srcdir)/GLSh_Fill.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo `test -f '$(srcdir)/GLSh_Fill.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_Fill.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLSh_Fill.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.lo `test -f '$(srcdir)/GLSh_Fill.cpp' || echo '$(srcdir)/'`$(srcdir)/GLSh_Fill.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.lo: $(srcdir)/IOpenGLAsmShader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLAsmShader.lo `test -f '$(srcdir)/IOpenGLAsmShader.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLAsmShader.cpp
@@ -1040,14 +1049,6 @@ libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVertexBuffer.lo: $(srcdir)/IOpenGLVe
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/IOpenGLVertexBuffer.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVertexBuffer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLVertexBuffer.lo `test -f '$(srcdir)/IOpenGLVertexBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLVertexBuffer.cpp
-
-libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.lo: $(srcdir)/GfxSetupX11.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.lo `test -f '$(srcdir)/GfxSetupX11.cpp' || echo '$(srcdir)/'`$(srcdir)/GfxSetupX11.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GfxSetupX11.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GfxSetupX11.lo `test -f '$(srcdir)/GfxSetupX11.cpp' || echo '$(srcdir)/'`$(srcdir)/GfxSetupX11.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-IOpenGLQuery.lo: $(srcdir)/IOpenGLQuery.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-IOpenGLQuery.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-IOpenGLQuery.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLQuery.lo `test -f '$(srcdir)/IOpenGLQuery.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLQuery.cpp
