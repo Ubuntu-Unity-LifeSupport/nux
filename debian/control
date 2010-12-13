@@ -18,11 +18,12 @@ Build-Depends: debhelper (>= 7.0.50~),
 Standards-Version: 3.9.1
 Section: libs
 Homepage: http://launchpad.net/nux
+Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nux/ubuntu
 
 Package: libnux-0.9-0
 Section: libs
 Architecture: any
-Depends: libnux-0.9-common,
+Depends: libnux-0.9-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - shared lib

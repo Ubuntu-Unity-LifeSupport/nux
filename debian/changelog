@@ -1,3 +1,11 @@
+nux (0.9.10-0ubuntu2) natty; urgency=low
+
+  * debian/control:
+    - force -common to be in sync with nux
+    - add Vcs-Bzr
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 13 Dec 2010 12:39:21 +0100
+
 nux (0.9.10-0ubuntu1) natty; urgency=low
 
   * New upstream release.
