@@ -70,8 +70,6 @@ namespace nux
   // graphics card is made by AMD/ATI
   #define NUX_USE_PBO     1
 
-  #define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
-
   extern PixelFormatInfo GPixelFormats[];
 
   static void InitTextureFormats()
@@ -537,7 +535,7 @@ namespace nux
     glGetIntegerv (GL_MAJOR_VERSION, &new_opengl_major);
     glGetIntegerv (GL_MINOR_VERSION, &new_opengl_minor);
 
-    if ((new_opengl_minor != _opengl_major) || (new_opengl_minor != _opengl_minor))
+    if ((new_opengl_major != _opengl_major) || (new_opengl_minor != _opengl_minor))
     {
       nuxDebugMsg (TEXT ("The Gpu supports OpenGL %d.%d but version %d.%d has been requested."), _opengl_major, _opengl_minor, new_opengl_major, new_opengl_minor);
     }

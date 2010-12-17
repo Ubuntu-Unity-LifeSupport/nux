@@ -1,3 +1,15 @@
+nux (0.9.12-0ubuntu1) natty; urgency=low
+
+  * New upstream release:
+    - "compiz crashed with SIGSEGV in nux::IOpenGLSurface::UnlockRect()"
+      is fixed (lp: #686698)
+  * debian/rules:
+    - updated the shlibs
+  * debian/libnux-0.9-doc.install:
+    - install the gputests examples there
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Fri, 17 Dec 2010 13:59:57 +0100
+
 nux (0.9.10-0ubuntu2) natty; urgency=low
 
   * debian/control:

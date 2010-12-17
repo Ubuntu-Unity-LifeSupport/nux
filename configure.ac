@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [0])
 m4_define([nux_minor_version], [9])
-m4_define([nux_micro_version], [10])
+m4_define([nux_micro_version], [12])
 
 # Bump this when we break ABI
 m4_define([nux_api_version], [0.9])
@@ -232,6 +232,21 @@ AM_COND_IF([BUILD_EXAMPLES],
       ],
 )
 
+# this enables gpu tests
+AC_ARG_ENABLE([gputests],
+              [AC_HELP_STRING([--enable-gputests=@<:@no/yes@:>@],
+              [Enable building of gpu tests @<:@default=yes@:>@])],
+              [],
+              [enable_gputests=yes])
+
+AM_CONDITIONAL(BUILD_GPUTESTS, [test "x$enable_gputests" = "xyes"])
+AM_COND_IF([BUILD_GPUTESTS],
+      [
+          PKG_CHECK_MODULES(NUX_GPUTESTS, x11)
+          AC_SUBST(NUX_GPUTESTS_CFLAGS)
+          AC_SUBST(NUX_GPUTESTS_LIBS)
+      ],
+)
 
 dnl ===========================================================================
 
@@ -251,6 +266,7 @@ AC_CONFIG_FILES([
   examples/Makefile
   tests/Makefile
   tools/Makefile
+  gputests/Makefile
 ])
 
 AC_OUTPUT
@@ -279,6 +295,7 @@ echo -e "        Build Documenation: ${BOLD_WHITE}${enable_documentation}${RESET
 echo -e "${RESET}"
 echo -e "${GREEN} • Misc Options:${RESET}"
 echo -e "        Build Examples    : ${BOLD_WHITE}${enable_examples}${RESET}"
+echo -e "        Build Gpu Tests   : ${BOLD_WHITE}${enable_gputests}${RESET}"
 echo ""
 
 echo -e "${RESET}"

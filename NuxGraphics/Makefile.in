@@ -120,7 +120,6 @@ am__objects_1 = libnux_graphics_@NUX_API_VERSION@_la-Events.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLTexture2D.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLVertexResourceManager.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLFrameBufferObject.lo \
-	libnux_graphics_@NUX_API_VERSION@_la-GLShader2.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLTemplatePrimitiveBuffer.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-IOpenGLSurface.lo \
 	libnux_graphics_@NUX_API_VERSION@_la-GLRenderingAPI.lo \
@@ -276,6 +275,8 @@ NUX_CORE_CFLAGS = @NUX_CORE_CFLAGS@
 NUX_CORE_LIBS = @NUX_CORE_LIBS@
 NUX_EXAMPLES_CFLAGS = @NUX_EXAMPLES_CFLAGS@
 NUX_EXAMPLES_LIBS = @NUX_EXAMPLES_LIBS@
+NUX_GPUTESTS_CFLAGS = @NUX_GPUTESTS_CFLAGS@
+NUX_GPUTESTS_LIBS = @NUX_GPUTESTS_LIBS@
 NUX_GRAPHICS_CFLAGS = @NUX_GRAPHICS_CFLAGS@
 NUX_GRAPHICS_LIBS = @NUX_GRAPHICS_LIBS@
 NUX_IMAGE_CFLAGS = @NUX_IMAGE_CFLAGS@
@@ -490,7 +491,6 @@ source_cpp = \
   $(srcdir)/IOpenGLTexture2D.cpp \
   $(srcdir)/GLVertexResourceManager.cpp \
   $(srcdir)/IOpenGLFrameBufferObject.cpp \
-  $(srcdir)/GLShader2.cpp \
   $(srcdir)/GLTemplatePrimitiveBuffer.cpp \
   $(srcdir)/IOpenGLSurface.cpp \
   $(srcdir)/GLRenderingAPI.cpp \
@@ -608,7 +608,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_DrawFunction.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLSh_Fill.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLShader.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLShader2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLShaderParameter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTemplatePrimitiveBuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTextureResourceManager.Plo@am__quote@
@@ -993,14 +992,6 @@ libnux_graphics_@NUX_API_VERSION@_la-IOpenGLFrameBufferObject.lo: $(srcdir)/IOpe
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/IOpenGLFrameBufferObject.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-IOpenGLFrameBufferObject.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-IOpenGLFrameBufferObject.lo `test -f '$(srcdir)/IOpenGLFrameBufferObject.cpp' || echo '$(srcdir)/'`$(srcdir)/IOpenGLFrameBufferObject.cpp
-
-libnux_graphics_@NUX_API_VERSION@_la-GLShader2.lo: $(srcdir)/GLShader2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLShader2.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLShader2.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLShader2.lo `test -f '$(srcdir)/GLShader2.cpp' || echo '$(srcdir)/'`$(srcdir)/GLShader2.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLShader2.Tpo $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLShader2.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(srcdir)/GLShader2.cpp' object='libnux_graphics_@NUX_API_VERSION@_la-GLShader2.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libnux_graphics_@NUX_API_VERSION@_la-GLShader2.lo `test -f '$(srcdir)/GLShader2.cpp' || echo '$(srcdir)/'`$(srcdir)/GLShader2.cpp
 
 libnux_graphics_@NUX_API_VERSION@_la-GLTemplatePrimitiveBuffer.lo: $(srcdir)/GLTemplatePrimitiveBuffer.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libnux_graphics_@NUX_API_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libnux_graphics_@NUX_API_VERSION@_la-GLTemplatePrimitiveBuffer.lo -MD -MP -MF $(DEPDIR)/libnux_graphics_@NUX_API_VERSION@_la-GLTemplatePrimitiveBuffer.Tpo -c -o libnux_graphics_@NUX_API_VERSION@_la-GLTemplatePrimitiveBuffer.lo `test -f '$(srcdir)/GLTemplatePrimitiveBuffer.cpp' || echo '$(srcdir)/'`$(srcdir)/GLTemplatePrimitiveBuffer.cpp

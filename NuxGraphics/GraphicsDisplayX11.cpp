@@ -40,10 +40,7 @@ namespace nux
   unsigned int gVirtualKeycodeState[NUX_MAX_VK];
 
   // Compute the frame rate every FRAME_RATE_PERIODE;
-#define FRAME_RATE_PERIODE    10
-
-#define NUX_MISSING_GL_EXTENSION_MESSAGE_BOX(message) {MessageBox(NULL, TEXT("Missing extension: " #message), TEXT("ERROR"), MB_OK|MB_ICONERROR); exit(-1);}
-#define NUX_ERROR_EXIT_MESSAGE(message) inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal, #message " The program will exit.")); exit(-1);
+  #define FRAME_RATE_PERIODE    10
 
   EventToNameStruct EventToName[] =
   {
@@ -61,7 +58,6 @@ namespace nux
     {NUX_WINDOW_MOUSELEAVE,      TEXT ("NUX_WINDOW_MOUSELEAVE") },
     {NUX_TERMINATE_APP,          TEXT ("NUX_TERMINATE_APP") }
   };
-
 
   GraphicsDisplay::GraphicsDisplay()
   {
@@ -113,10 +109,8 @@ namespace nux
 
     if (path == TEXT ("") && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate resource file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate resource file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -130,10 +124,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate ui texture file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate ui texture file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -147,10 +139,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate shader file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate shader file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -164,10 +154,8 @@ namespace nux
 
     if ( (path == TEXT ("") ) && ErrorOnFail)
     {
-      nuxDebugMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
-      /*inlWin32MessageBox(NULL, TEXT("Error"), MBTYPE_Ok, MBICON_Error, MBMODAL_ApplicationModal,
-          TEXT("Failed to locate font file %s.\nThe program will exit."), ResourceFileName);*/
-      exit (1);
+      nuxCriticalMsg (TEXT ("[GraphicsDisplay::FindResourceLocation] Failed to locate font file file: %s."), ResourceFileName);
+      return NString (TEXT(""));
     }
 
     return path;
@@ -249,7 +237,7 @@ namespace nux
     if (!glXQueryExtension(m_X11Display, &dummy0, &dummy1))
     {
       nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] GLX is not supported."));
-      exit (-1);
+      return false;
     }
 
     // Check GLX version
@@ -329,7 +317,7 @@ namespace nux
         if (fbconfigs == NULL)
         {
           nuxCriticalMsg (TEXT ("[GraphicsDisplay::CreateOpenGLWindow] glXChooseFBConfig cannot get a supported configuration."));
-          exit (-1);
+          return false;
         }
 
         // Select the best config
@@ -503,7 +491,7 @@ namespace nux
 
     m_GraphicsContext = new GraphicsEngine (*this);
 
-    EnableVSyncSwapControl();
+    //EnableVSyncSwapControl();
     //DisableVSyncSwapControl();
 
     return TRUE;
@@ -1277,7 +1265,7 @@ namespace nux
           // Note that the logical state of a device (as seen by client applications) may lag the physical state if device
           // event processing is frozen.
 
-          XQueryKeymap (m_X11Display, Keys);
+          XQueryKeymap (xevent->xany.display, Keys);
 
           if (Keys[xevent->xkey.keycode >> 3] & (1 << (xevent->xkey.keycode % 8) ) )
           {
@@ -1837,34 +1825,40 @@ namespace nux
 
   void GraphicsDisplay::SetWindowTitle (const TCHAR *Title)
   {
-    XStoreName(m_X11Display, m_X11Window, TCHAR_TO_ANSI (Title));
+    XStoreName (m_X11Display, m_X11Window, TCHAR_TO_ANSI (Title));
   }
 
-  bool GraphicsDisplay::HasVSyncSwapControl() const
+  bool GraphicsDisplay::HasVSyncSwapControl () const
   {
-    return GetThreadGLDeviceFactory()->GetGpuInfo().Support_EXT_Swap_Control();
+    return GetThreadGLDeviceFactory ()->GetGpuInfo().Support_EXT_Swap_Control ();
   }
 
-  void GraphicsDisplay::EnableVSyncSwapControl()
+  void GraphicsDisplay::EnableVSyncSwapControl ()
   {
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    glXSwapIntervalEXT(m_X11Display, drawable, 1);
+    if (GetGpuDevice ()->GetGpuInfo ().Support_EXT_Swap_Control ())
+    {
+      GLXDrawable drawable = glXGetCurrentDrawable();
+      glXSwapIntervalEXT(m_X11Display, drawable, 1);
+    }
   }
 
-  void GraphicsDisplay::DisableVSyncSwapControl()
+  void GraphicsDisplay::DisableVSyncSwapControl ()
   {
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    glXSwapIntervalEXT(m_X11Display, drawable, 0);
+    if (GetGpuDevice ()->GetGpuInfo ().Support_EXT_Swap_Control ())
+    {
+      GLXDrawable drawable = glXGetCurrentDrawable ();
+      glXSwapIntervalEXT (m_X11Display, drawable, 0);
+    }
   }
 
-  float GraphicsDisplay::GetFrameTime() const
+  float GraphicsDisplay::GetFrameTime () const
   {
     return m_FrameTime;
   }
 
-  void GraphicsDisplay::ResetFrameTime()
+  void GraphicsDisplay::ResetFrameTime ()
   {
-    m_Timer.Reset();
+    m_Timer.Reset ();
   }
 
   /*
