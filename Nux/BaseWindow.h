@@ -76,6 +76,7 @@ namespace nux
     void AddWidget (View *ic);
     void AddWidget (View *ic, int stretchfactor);
     void AddWidget (std::list<View *> *ViewList);
+    Layout *GetLayout ();
     void SetLayout (Layout *layout);
 
     void PushHigher (BaseWindow* floating_view);
@@ -193,7 +194,7 @@ namespace nux
     
   private:
     //! Contains the background of the texture. Can be used to blur. It is set by the window compositor.
-    IntrusiveSP<BaseTexture> _background_texture;
+    ObjectPtr<BaseTexture> _background_texture;
 
     #if defined(NUX_OS_LINUX)
     bool m_input_window_enabled;
