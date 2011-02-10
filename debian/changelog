@@ -1,3 +1,13 @@
+nux (0.9.22-0ubuntu1) natty; urgency=low
+
+  * New upstream release.
+  * debian/rules:
+    - bump shlib
+  * debian/libnux-0.9-doc.install:
+    - don't install examples, they are not shipped anymore
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Feb 2011 20:45:14 +0100
+
 nux (0.9.18-0ubuntu1) natty; urgency=low
 
   * New upstream release.
