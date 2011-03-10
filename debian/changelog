@@ -1,3 +1,27 @@
+nux (0.9.32-0ubuntu1) natty; urgency=low
+
+  * New upstream release.
+    - compiz crashed with SIGSEGV in std::basic_string<char,
+      std::char_traits<char>, std::allocator<char> >::assign() (LP: #729412)
+    - Unity interface not resized properly when external monitor is used
+      (LP: #691772)
+    - unity_support_test crashed with SIGSEGV in
+      nux::IOpenGLAsmVertexShader::IOpenGLAsmVertexShader() (LP: #709649)
+    - compiz crashed with SIGSEGV in
+      nux::GpuRenderStates::SubmitChangeStates() (LP: #719156)
+    - compiz crashed with SIGSEGV in
+      nux::GpuRenderStates::SubmitChangeStates() (LP: #724903)
+    - unity_support_test crashed with SIGSEGV in
+      nux::IOpenGLAsmVertexShader::IOpenGLAsmVertexShader() (LP: #723531)
+    - unity_support_test crashed with SIGSEGV in
+      nux::IOpenGLAsmVertexShader::IOpenGLAsmVertexShader() (LP: #723158)
+    - unity_support_test crashed with SIGSEGV in
+      nux::IOpenGLAsmVertexShader::IOpenGLAsmVertexShader() (LP: #727895)
+  * debian/rules:
+    - bump shlib
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 10 Mar 2011 19:51:23 +0100
+
 nux (0.9.30-0ubuntu1) natty; urgency=low
 
   * New upstream release:
