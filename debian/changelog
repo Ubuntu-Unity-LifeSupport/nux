@@ -1,3 +1,23 @@
+nux (1.0.2-0ubuntu1) oneiric; urgency=low
+
+  * New upstream release.
+  * Cherry-pick a fix for FTBFS with -fpermissive
+  * debian/control:
+    - add new libxdamage-dev and libxcomposite-dev build-dep
+    - add new libboost1.42-dev dep as well, should be transitionned to 1.46 once
+      compiz is transitionned as well
+  * remove debian/patches/01_build_with_gcc46.patch as included upstream
+  * debian/rules:
+    - disable google code tests while building
+  * debian/control, debian/rules, debian/libnux-1.0-common.install,
+    debian/libnux-1.0-dev.install, debian/libnux-1.0-doc.install,
+    debian/libnux-1.0-0.install:
+    - change, prepare next ABI breakage and remove no more needed Breaks: with
+      new soname bump
+  * libnux-1.0-common now replaces: libnux-0.9-common for the apport hook
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 22 Jun 2011 17:16:16 +0200
+
 nux (0.9.48-0ubuntu4) oneiric; urgency=low
 
   * Cherry-pick more fixes:
