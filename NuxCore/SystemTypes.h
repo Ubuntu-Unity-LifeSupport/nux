@@ -60,7 +60,7 @@ namespace nux
   typedef unsigned int            t_UTF32;
 #ifdef _WIN32
   typedef wchar_t             t_UTF16;
-#elif defined(__linux)
+#elif defined(__linux__)
   typedef wchar_t             t_UTF16;
 #elif defined (__APPLE__)
   typedef wchar_t             t_UTF16;
@@ -83,11 +83,11 @@ namespace nux
 // //     const long t_MaxInteger = 0xFFFFFFFF;
 // //     typedef long            t_saddress;
 // //     typedef unsigned long   t_uaddress;
-// #elif defined(__linux) && (defined(__ia64__) || defined(__amd64__))
+// #elif defined(__linux__) && (defined(__ia64__) || defined(__amd64__))
 //     typedef long long       t_integer;      // 64 bits
 //     typedef long long       *t_pointer;     // 64 bits
 //     const   long long       t_MaxInteger = 0xFFFFFFFFFFFFFFFF;
-// #elif defined __linux
+// #elif defined __linux__
 //     typedef long            t_integer;      // 32 bits
 //     typedef long            *t_pointer;     // 32 bits
 //     const   long            t_MaxInteger = 0xFFFFFFFF;
@@ -174,9 +174,9 @@ namespace nux
     #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
 #elif  _WIN64
     #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
-#elif __linux
+#elif __linux__
     #define NUX_PTR_TO_INT(ptr) (long)((long)(ptr))
-#elif defined(__linux) && (defined(__ia64__) || defined(__amd64__))
+#elif defined(__linux__) && (defined(__ia64__) || defined(__amd64__))
     #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
 #elif __APPLE__
     #define NUX_PTR_TO_INT(ptr) (long long)((long long)(ptr))
