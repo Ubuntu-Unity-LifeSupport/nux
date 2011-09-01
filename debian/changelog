@@ -1,11 +1,19 @@
+nux (1.6.0-0ubuntu1) oneiric; urgency=low
+
+  * New upstream release
+  * debian/rules:
+    - updated shlibs
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 01 Sep 2011 17:32:57 +0200
+
 nux (1.4.0-0ubuntu3) oneiric; urgency=low
 
   * Backport a small api tweak from trunk, it's a small abi break but required
     to fix an unity issue and better now than latter
-  * debian/control: break on current unity, it will need a rebuild since 
-    there is a symbol change
+  * debian/control: break on current unity, it will need a rebuild
+  * debian/rules: updated shlibs
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 22:48:49 +0200
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 25 Aug 2011 23:03:03 +0200
 
 nux (1.4.0-0ubuntu2) oneiric; urgency=low
 
