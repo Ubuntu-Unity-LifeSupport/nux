@@ -1,3 +1,13 @@
+nux (1.6.0-0ubuntu2) oneiric; urgency=low
+
+  * tools/unity_support_test.c:
+    - enables caching startup result
+  * debian/50_check_unity_support, debian/nux-tools.install:
+    - install new helper to check for unity support before logging into
+      session (LP: #842656)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 06 Sep 2011 17:53:03 +0200
+
 nux (1.6.0-0ubuntu1) oneiric; urgency=low
 
   * New upstream release
