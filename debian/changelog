@@ -1,3 +1,11 @@
+nux (1.16.0-0ubuntu2) precise; urgency=low
+
+  * Don't build anymore the documentation and don't gputests files
+  * debian/control:
+    - add build-dep on libutouch-geis-dev
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 22 Nov 2011 18:55:04 +0100
+
 nux (1.16.0-0ubuntu1) oneiric-proposed; urgency=low
 
   * New upstream release.
