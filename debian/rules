@@ -13,9 +13,9 @@ gles2_architectures := armel armhf
 # remove doc/
 override_dh_auto_configure:
 ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(gles2_architectures)))
-	dh_auto_configure -- --enable-documentation=no --disable-tests --enable-opengles-20
+	dh_auto_configure -- --enable-documentation=no --enable-opengles-20
 else
-	dh_auto_configure -- --enable-documentation=no --disable-tests
+	dh_auto_configure -- --enable-documentation=no
 endif
 NUX_ABIVERSION := $(shell sed -rn 's/^\#define[[:space:]]+NUX_ABIVERSION[[:space:]]+//p' Nux/ABI.h )
 

@@ -1,3 +1,26 @@
+nux (2.10.0-0ubuntu1) precise-proposed; urgency=low
+
+  * New upstream release.
+    - compiz crashed with SIGSEGV in g_datalist_id_set_data_full() from ...
+      from unity::PanelTray::~PanelTray() from ... from
+      unity::panel::Controller::Impl::OnScreenChanged (LP: #921316)
+    - Far left character in panel (and launcher popups) distorted
+      (LP: #927441)
+    - [dash] Dash does not render "panel line" (LP: #926344)
+    - [multi-monitor] DND doesn't work for the launchers in other monitors
+      (LP: #965025)
+    - Unity dash can't select items using keyboard when ibus is active
+      (LP: #973344)
+  * debian/rules:
+    - remove disable-tests are now tests are only build if the right build-dep
+      are here.
+  * debian/control:
+    - add libxtst-dev as nux Makefile rules are broken and still try to include
+      the .h files even if the pc file check failed.
+    - bump Standards-Version to latest
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 12 Apr 2012 15:14:45 +0200
+
 nux (2.8.0-0ubuntu2) precise; urgency=low
 
   * Enabling build with OpenGL ES2.0 support for ARM (LP: #979438)
