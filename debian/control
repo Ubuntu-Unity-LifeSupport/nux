@@ -7,16 +7,14 @@ Build-Depends: debhelper (>= 7.0.50~),
                doxygen,
                libglib2.0-dev (>= 2.25.14),
                libgdk-pixbuf2.0-dev,
-               libboost1.46-dev,
+               libboost-dev,
                libcairo2-dev (>= 1.9.14),
                libpng12-dev (>= 1.2.44),
-               libglew1.6-dev [!armel !armhf],
-               libglewmx1.6-dev [!armel !armhf],
+               libglew-dev,
+               libglewmx-dev,
                libxxf86vm-dev,
-               libgl1-mesa-dev (>= 7.9~git20100924-0ubuntu3) [!armel !armhf],
-               libglu1-mesa-dev [!armel !armhf],
-               libegl1-mesa-dev [armel armhf],
-               libgles2-mesa-dev [armel armhf],
+               libgl1-mesa-dev (>= 7.9~git20100924-0ubuntu3),
+               libglu1-mesa-dev,
                libxdamage-dev,
                libxcomposite-dev,
                libsigc++-2.0-dev,
@@ -28,10 +26,12 @@ Build-Depends: debhelper (>= 7.0.50~),
                libutouch-geis-dev,
                libibus-1.0-dev,
                libxtst-dev,
+               gcc-4.6,
+               g++-4.6,
 Standards-Version: 3.9.3
 Section: libs
 Homepage: http://launchpad.net/nux
-Vcs-Bzr: https://code.launchpad.net/~ubuntu-desktop/nux/ubuntu
+Vcs-Bzr: https://code.launchpad.net/+branch/ubuntu/nux
 
 Package: libnux-2.0-0
 Section: libs
@@ -40,7 +40,6 @@ Depends: libnux-2.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}
-Breaks: unity (<< 4.10.0-0ubuntu2)
 Description: Visual rendering toolkit for real-time applications - shared lib
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.
@@ -52,7 +51,6 @@ Section: x11
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends}
-Replaces: libnux-1.0-common
 Description: Visual rendering toolkit for real-time applications - tools
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.
@@ -67,13 +65,11 @@ Depends: libnux-2.0-0 (= ${binary:Version}),
          libgdk-pixbuf2.0-dev,
          libcairo2-dev (>= 1.9.14),
          libpng12-dev (>= 1.2.44),
-         libglew1.6-dev [!armel !armhf],
-         libglewmx1.6-dev [!armel !armhf],
-         libboost1.46-dev,
+         libglew-dev,
+         libglewmx-dev,
+         libboost-dev,
          libxxf86vm-dev,
-         libgl1-mesa-dev [!armel !armhf],
-         libegl1-mesa-dev [armel armhf],
-         libgles2-mesa-dev [armel armhf],
+         libgl1-mesa-dev,
          libsigc++-2.0-dev,
          libpango1.0-dev,
          libpcre3-dev,
@@ -88,7 +84,6 @@ Package: libnux-2.0-common
 Section: libs
 Architecture: all
 Depends: ${misc:Depends}
-Replaces: libnux-0.9-common
 Description: Visual rendering toolkit for real-time applications - common files
  Nux is a graphical user interface toolkit for applications that mixes opengl
  hardware acceleration with high quality visual rendering.
