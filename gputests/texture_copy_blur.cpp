@@ -26,7 +26,7 @@
 #include "NuxGraphics/GraphicsEngine.h"
 
 /*
- * Tests: 
+ * Tests:
  *  - Frame buffer object
  *  - Set a texture in the fbo
  *  - Set fbo as a render target
@@ -62,11 +62,12 @@ void RenderBlurredCopyOfRenderTarget ()
   nux::Event event;
   memset(&event, 0, sizeof(nux::Event));
 
-  char fps [25];
+  /*char fps [25];
   int frame_counter = 0;
   int frame_periode = 0;
   float frame_rate = 0;
   float periode_time = 0;
+  */
   bool first_time = true;
   do
   {
@@ -90,8 +91,9 @@ void RenderBlurredCopyOfRenderTarget ()
       fbo         = graphics_display->GetGpuDevice ()->CreateFrameBufferObject ();
       texture_rt  = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_R8G8B8A8);
       depth_rt    = graphics_display->GetGpuDevice ()->CreateSystemCapableDeviceTexture (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), 1, nux::BITFMT_D24S8);
-      fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
     }
+
+    fbo->FormatFrameBufferObject (graphics_display->GetWindowWidth(), graphics_display->GetWindowHeight(), nux::BITFMT_R8G8B8A8);
 
     fbo->SetRenderTarget (0, texture_rt->GetSurfaceLevel (0));
     fbo->SetDepthSurface (depth_rt->GetSurfaceLevel (0));
@@ -122,7 +124,7 @@ void RenderBlurredCopyOfRenderTarget ()
     // Render the blurred texture
     graphics_engine->QRP_1Tex(0, 0, tex_blur->GetWidth(), tex_blur->GetHeight(), tex_blur, texxform, nux::color::White);
 
-    sprintf(fps, "FPS: %3.2f", frame_rate);
+    /*sprintf(fps, "FPS: %3.2f", frame_rate);
     nux::PageBBox page;
     page.xmin = 0;
     page.xmax = 100;
@@ -147,7 +149,9 @@ void RenderBlurredCopyOfRenderTarget ()
       periode_time = 0.0f;
       frame_periode = 0;
     }
+    */
 
+    graphics_display->SwapBuffer();
   } while((event.type != nux::NUX_TERMINATE_APP) && (event.GetVirtualKeyState(NUX_VK_ESCAPE) == 0));
 
   fbo.Release ();
@@ -157,7 +161,7 @@ void RenderBlurredCopyOfRenderTarget ()
   delete graphics_display;
 }
 
-int main(int argc, char **argv)
+int main()
 {
   nux::NuxCoreInitialize(0);
   nux::NuxGraphicsInitialize();

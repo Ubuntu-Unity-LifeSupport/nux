@@ -75,7 +75,7 @@ namespace nux
     m_SplitConfig.clear();
   }
 
-  void HSplitter::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void HSplitter::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PushClippingRectangle(GetGeometry());
     Geometry base = GetGeometry();
@@ -177,11 +177,6 @@ namespace nux
     }
 
     graphics_engine.PopClippingRectangle();
-  }
-
-  void HSplitter::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   void HSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
@@ -420,7 +415,7 @@ namespace nux
     m_initial_config = true;
   }
 
-  void HSplitter::OnSplitterMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void HSplitter::OnSplitterMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     m_point = Point(x, y);
 
@@ -432,7 +427,7 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void HSplitter::OnSplitterMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void HSplitter::OnSplitterMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     if (mvt_dy)
     {
@@ -462,7 +457,7 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void HSplitter::OnSplitterMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void HSplitter::OnSplitterMouseDrag(int /* x */, int y, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     int num_element = (int) m_SplitterObject.size();
@@ -590,7 +585,7 @@ namespace nux
 
   Area* HSplitter::KeyNavIteration(KeyNavDirection direction)
   {
-    if (m_InterfaceObject.size() == 0)
+    if (m_InterfaceObject.empty())
       return NULL;
 
     if (next_object_to_key_focus_area_)

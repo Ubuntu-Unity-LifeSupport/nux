@@ -90,6 +90,7 @@ void QuadRendering_2TexMod ()
   memset(&event, 0, sizeof(nux::Event));
   graphics_engine->GetWindowSize(w, h);
   graphics_engine->SetViewport(0, 0, w, h);
+  graphics_engine->SetScissor(0, 0, w, h);
   graphics_engine->SetContext(0, 0, w, h);
   graphics_engine->Push2DWindow(w, h);
 
@@ -140,7 +141,7 @@ void QuadRendering_2TexMod ()
 }
 
 
-int main(int argc, char **argv)
+int main()
 
 {
   nux::NuxCoreInitialize(0);

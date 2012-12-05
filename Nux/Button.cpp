@@ -339,7 +339,7 @@ namespace nux
     QueueDraw();
   }
 
-  void Button::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void Button::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -358,13 +358,6 @@ namespace nux
     else
     {
       ref_style = eBUTTON_NORMAL;
-    }
-
-    const PainterImage *pimage = GetTheme().GetImage(ref_style);
-    BaseTexture* texture = NULL;
-    if (pimage != NULL)
-    {
-      texture = pimage->texture;
     }
 
     TexCoordXForm texxform;
@@ -438,7 +431,7 @@ namespace nux
     QueueDraw();
   }
 
-  void Button::RecvClick(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void Button::RecvClick(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (persistent_active_state_)
     {

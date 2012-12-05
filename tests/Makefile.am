@@ -8,6 +8,7 @@ check_LIBRARIES = libgtest.a
 
 check_PROGRAMS = \
   gtest-nux \
+  gtest-nux-slow \
   gtest-nuxcore \
   test-graphics-display \
   test-empty-window \
@@ -24,6 +25,7 @@ check_PROGRAMS = \
   xtest-text-entry-deadkeys \
   xtest-text-entry-compositionkeys \
   xtest-text-entry-logic \
+  xtest-text-entry-xim \
   xtest-focus-on-mouse-enter
 
 gtest_nuxcore_SOURCES = \
@@ -49,7 +51,7 @@ gtest_nuxcore_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -57,8 +59,6 @@ gtest_nuxcore_CPPFLAGS = \
 
 gtest_nuxcore_LDADD = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
-  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
-  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_LIBS) \
   libgtest.a
 
@@ -66,21 +66,18 @@ gtest_nuxcore_LDFLAGS = \
   -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
+##### gtest-nux ######
+
 gtest_nux_SOURCES = \
   FakeGestureEvent.h \
-  gtest-nux-area.cpp \
-  gtest-nux-cairo-wrapper.cpp \
+  gtest-nux-axisdecelerationanimation.cpp \
   gtest-nux-emmetrics.cpp \
-  gtest-nux-main.cpp \
-  gtest-nux-statictext.cpp \
-  gtest-nux-scrollview.cpp \
-  gtest-nux-textentry.cpp \
-  gtest-nux-utils.h \
+  gtest-nux-globals.cpp \
+  gtest-nux-globals.h \
+  gtest-nux-kineticscroller.cpp \
   gtest-nux-inputmethodibus.cpp \
-  gtest-nux-input-area.cpp \
-  gtest-nux-view.cpp \
-  gtest-nux-windowcompositor.cpp \
-  gtest-nux-windowthread.cpp
+  gtest-nux-velocitycalculator.cpp \
+  gtest-nux-main.cpp
 
 if HAVE_GEIS
 gtest_nux_SOURCES += \
@@ -98,7 +95,7 @@ gtest_nux_CPPFLAGS = \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -116,6 +113,48 @@ gtest_nux_LDFLAGS = \
   -lpthread -lgmock \
   -lboost_filesystem -lboost_system
 
+##### gtest-nux-slow ######
+
+gtest_nux_slow_SOURCES = \
+  gtest-nux-area.cpp \
+  gtest-nux-cairo-wrapper.cpp \
+  gtest-nux-input-area.cpp \
+  gtest-nux-main.cpp \
+  gtest-nux-inputarea-proximity.cpp \
+  gtest-nux-statictext.cpp \
+  gtest-nux-scrollview.cpp \
+  gtest-nux-textentry.cpp \
+  gtest-nux-utils.h \
+  gtest-nux-view.cpp \
+  gtest-nux-windowcompositor.cpp \
+  gtest-nux-windowthread.cpp
+
+gtest_nux_slow_CPPFLAGS = \
+  -I$(srcdir) \
+  -I$(top_srcdir) \
+  -DPREFIX=\""$(prefix)"\" \
+	-DLIBDIR=\""$(libdir)"\" \
+  -DDATADIR=\""$(datadir)"\" \
+  -DG_LOG_DOMAIN=\"NuxTests\" \
+  -DTESTDIR=\""$(top_srcdir)/tests"\" \
+  $(GCC_TESTS_FLAGS) \
+  $(NUX_CORE_CFLAGS) \
+  $(NUX_EXAMPLES_CFLAGS) \
+  $(NUX_CFLAGS) \
+  $(MAINTAINER_CFLAGS) \
+  $(IBUS_CFLAGS)
+
+gtest_nux_slow_LDADD = \
+  $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
+  $(top_builddir)/NuxGraphics/libnux-graphics-@NUX_API_VERSION@.la \
+  $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
+  $(NUX_LIBS) \
+  libgtest.a
+
+gtest_nux_slow_LDFLAGS = \
+  -lpthread -lgmock \
+  -lboost_filesystem -lboost_system
+
 TestFlags = -I$(srcdir) \
   -I$(top_srcdir) \
   -DPREFIX=\""$(prefix)"\" \
@@ -123,7 +162,7 @@ TestFlags = -I$(srcdir) \
   -DDATADIR=\""$(datadir)"\" \
   -DG_LOG_DOMAIN=\"NuxTests\" \
   -DTESTDIR=\""$(top_srcdir)/tests"\" \
-  $(GCC_FLAGS) \
+  $(GCC_TESTS_FLAGS) \
   $(NUX_CORE_CFLAGS) \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
@@ -262,6 +301,14 @@ xtest_text_entry_compositionkeys_CPPFLAGS = $(TestFlags)
 xtest_text_entry_compositionkeys_LDADD = $(TestLibs)
 xtest_text_entry_compositionkeys_LDFLAGS = -lpthread -lXtst
 
+xtest_text_entry_xim_SOURCES = xtest-text-entry-xim.cpp \
+  nux_automated_test_framework.cpp \
+  nux_automated_test_framework.h
+
+xtest_text_entry_xim_CPPFLAGS = $(TestFlags)
+xtest_text_entry_xim_LDADD = $(TestLibs)
+xtest_text_entry_xim_LDFLAGS = -lpthread -lXtst
+
 #run make test as part of make check
 check-local: test gtest test-apps
 
@@ -275,7 +322,7 @@ gtest: gtest-nuxcore gtest-nux
 check-headless: gtest-nuxcore
 	@gtester --verbose -k -o=test-nux-results.xml ./gtest-nuxcore
 
-test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys xtest-text-entry-compositionkeys
+test-apps: test-graphics-display test-empty-window xtest-text-entry-xim xtest-text-entry xtest-button xtest-mouse-events xtest-mouse-buttons xtest-hgrid-key-navigation xtest-hlayout-key-navigation xtest-vlayout-key-navigation xtest-scrollbar xtest-focus-on-mouse-down xtest-focus-on-mouse-enter xtest-keynav-directions xtest-text-entry-logic xtest-text-entry-deadkeys xtest-text-entry-compositionkeys
 	./test-graphics-display
 	./test-empty-window
 	./xtest-text-entry
@@ -292,7 +339,7 @@ test-apps: test-graphics-display test-empty-window xtest-text-entry xtest-button
 	./xtest-text-entry-logic
 	./xtest-text-entry-deadkeys
 	./xtest-text-entry-compositionkeys
-  
+
 
 check-report:
 	@gtester -k -o=test-nux-results.xml -k ./test-nux \

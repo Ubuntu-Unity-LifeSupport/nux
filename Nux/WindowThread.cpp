@@ -33,10 +33,7 @@
 
 namespace nux
 {
-namespace
-{
-logging::Logger logger("nux.windows.thread");
-}
+DECLARE_LOGGER(logger, "nux.windows.thread");
 
   TimerFunctor *m_ScrollTimerFunctor;
   TimerHandle m_ScrollTimerHandler;
@@ -86,11 +83,12 @@ logging::Logger logger("nux.windows.thread");
     _draw_requested_to_host_wm       = false;
     first_pass_        = true;
 
+#if !defined(NUX_MINIMAL)
     _Timelines = new std::list<Timeline*> ();
-    GTimeVal time_val;
-    g_get_current_time(&time_val);
-    last_timeline_frame_time_sec_ = time_val.tv_sec;
-    last_timeline_frame_time_usec_ = time_val.tv_usec;
+    gint64 micro_secs = g_get_real_time();
+    last_timeline_frame_time_sec_ = micro_secs / 1000000;
+    last_timeline_frame_time_usec_ = micro_secs % 1000000;
+#endif
     _MasterClock = NULL;
 
 #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
@@ -98,7 +96,7 @@ logging::Logger logger("nux.windows.thread");
     main_loop_glib_context_   = 0;
 #endif
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     x11display_ = NULL;
     ownx11display_ = false;
 #endif
@@ -117,16 +115,18 @@ logging::Logger logger("nux.windows.thread");
 #endif
 
     ThreadDtor();
+#if !defined(NUX_MINIMAL)
     std::list<Timeline*>::iterator li;
     for (li=_Timelines->begin(); li!=_Timelines->end(); ++li)
     {
       (*li)->UnReference();
     }
-    
     delete _Timelines;
+#endif
+
     delete async_wake_up_signal_;
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (x11display_ && ownx11display_)
     {
       XCloseDisplay(x11display_);
@@ -159,7 +159,7 @@ logging::Logger logger("nux.windows.thread");
     return handle;
   }
 
-  void WindowThread::AsyncWakeUpCallback(void* data)
+  void WindowThread::AsyncWakeUpCallback(void* /* data */)
   {
     this->GetTimerHandler().RemoveTimerHandler(async_wake_up_timer_handle_);
     _pending_wake_up_timer = false;
@@ -380,6 +380,7 @@ logging::Logger logger("nux.windows.thread");
       StopLayoutCycle();
   }
 
+#if !defined(NUX_MINIMAL)
   void WindowThread::AddTimeline(Timeline *timeline)
   {
     _Timelines->push_back(timeline);
@@ -390,13 +391,14 @@ logging::Logger logger("nux.windows.thread");
   void WindowThread::RemoveTimeline(Timeline *timeline)
   {
     _Timelines->remove(timeline);
-    if (_Timelines->size() == 0)
+    if (_Timelines->empty())
     {
       StopMasterClock();
     }
   }
+#endif
 
-  int WindowThread::Run(void *ptr)
+  int WindowThread::Run(void * /* ptr */)
   {
     if (GetWindowThread() != this)
     {
@@ -764,7 +766,7 @@ logging::Logger logger("nux.windows.thread");
     return 1;
   }
 
-  unsigned int SpawnThread(NThread &thread)
+  unsigned int SpawnThread(NThread & /* thread */)
   {
     return 0;
   }
@@ -839,7 +841,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::Start(void *ptr)
+  ThreadState WindowThread::Start(void * /* ptr */)
   {
     if (!parent_)
     {
@@ -861,7 +863,7 @@ logging::Logger logger("nux.windows.thread");
     }
   }
 
-  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool Modal)
+  ThreadState WindowThread::StartChildThread(AbstractThread *thread, bool /* Modal */)
   {
     if (wait_for_modal_window_)
     {
@@ -940,19 +942,20 @@ logging::Logger logger("nux.windows.thread");
     return state;
   }
 
-  bool WindowThread::ProcessTimelines(GTimeVal *frame_time)
+#if !defined(NUX_MINIMAL)
+  bool WindowThread::ProcessTimelines(gint64 micro_secs)
   {
     // go through our timelines and tick them
     // return true if we still have active timelines
 
     long msecs;
-    msecs = (frame_time->tv_sec - last_timeline_frame_time_sec_) * 1000 +
-            (frame_time->tv_usec - last_timeline_frame_time_usec_) / 1000;
+    msecs = (micro_secs / 1000000 - last_timeline_frame_time_sec_) * 1000 +
+            (micro_secs % 1000000 - last_timeline_frame_time_usec_) / 1000;
 
     if (msecs < 0)
     {
-      last_timeline_frame_time_sec_ = frame_time->tv_sec;
-      last_timeline_frame_time_usec_ = frame_time->tv_usec;
+      last_timeline_frame_time_sec_ = micro_secs / 1000000;
+      last_timeline_frame_time_usec_ = micro_secs % 1000000;
       return true;
     }
 
@@ -983,6 +986,7 @@ logging::Logger logger("nux.windows.thread");
     // return if we have any timelines left
     return (_Timelines->size() != 0);
   }
+#endif
 
   void WindowThread::EnableMouseKeyboardInput()
   {
@@ -1088,9 +1092,7 @@ logging::Logger logger("nux.windows.thread");
       return true;
     }
 
-#if defined(NUX_OS_WINDOWS)
     SetWin32ThreadName(GetThreadId(), window_title_.c_str());
-#endif
 
     if (RegisterNuxThread(this) == FALSE)
     {
@@ -1141,6 +1143,7 @@ logging::Logger logger("nux.windows.thread");
 
     return true;
   }
+#elif defined(NO_X11)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   bool WindowThread::ThreadCtor(Display *X11Display, Window X11Window, EGLContext OpenGLContext)
@@ -1270,7 +1273,13 @@ logging::Logger logger("nux.windows.thread");
       return;
 
     if (window_compositor_)
+    {
       window_compositor_->SetBackgroundPaintLayer(background_layer);
+      if (main_layout_)
+      {
+        main_layout_->QueueDraw();
+      }
+    }
   }
   
   void WindowThread::AddToDrawList(View *view)
@@ -1321,8 +1330,10 @@ logging::Logger logger("nux.windows.thread");
 
 #if defined(NUX_OS_WINDOWS)
   bool WindowThread::ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data)
-#elif defined(NUX_OS_LINUX)
-  bool WindowThread::ProcessForeignEvent(XEvent *xevent, void *data)
+#elif defined(USE_X11)
+  bool WindowThread::ProcessForeignEvent(XEvent *xevent, void * /* data */)
+#else
+  bool WindowThread::ProcessForeignEvent()
 #endif
   {
     if (graphics_display_->IsPauseThreadGraphicsRendering())
@@ -1334,7 +1345,7 @@ logging::Logger logger("nux.windows.thread");
     memset(&nux_event, 0, sizeof(Event));
 #if defined(NUX_OS_WINDOWS)
     graphics_display_->ProcessForeignWin32Event(hWnd, msg, wParam, lParam, &nux_event);
-#elif defined(NUX_OS_LINUX)
+#elif defined(USE_X11)
     graphics_display_->ProcessForeignX11Event(xevent, &nux_event);
 #endif
 

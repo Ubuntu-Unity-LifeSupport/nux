@@ -54,21 +54,6 @@ namespace nux
     Allocate(num_element, size);
   }
 
-  //! Copy constructor
-  VertexBuffer::VertexBuffer(const VertexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-  }
-
-  //! Assignment constructor
-  VertexBuffer& VertexBuffer::operator = (const VertexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-    return *this;
-  }
-
   void VertexBuffer::Allocate(int num_element, int size)
   {
     nuxAssert(num_element > 0);
@@ -106,7 +91,7 @@ namespace nux
 
   const void* VertexBuffer::GetPtrRawData() const
   {
-    if (_Data.size() == 0)
+    if (_Data.empty())
       return 0;
 
     return NUX_STATIC_CAST(const void*, &_Data[0]);
@@ -114,7 +99,7 @@ namespace nux
 
   void* VertexBuffer::GetPtrRawData()
   {
-    if (_Data.size() == 0)
+    if (_Data.empty())
       return 0;
 
     return NUX_CONST_CAST(void*, ((NUX_CONST_CAST(const VertexBuffer*, this))->GetPtrRawData()));
@@ -133,21 +118,6 @@ namespace nux
   IndexBuffer::IndexBuffer(int num_element, int size)
   {
     Allocate(num_element, size);
-  }
-
-  //! Copy constructor
-  IndexBuffer::IndexBuffer(const IndexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-  }
-
-  //! Assignment constructor
-  IndexBuffer& IndexBuffer::operator = (const IndexBuffer& Other)
-  {
-    _Data = Other._Data;
-    _Stride = Other._Stride;
-    return *this;
   }
 
   void IndexBuffer::Allocate(int num_index, int size)

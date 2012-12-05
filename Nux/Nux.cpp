@@ -29,7 +29,7 @@ namespace nux
   static NCriticalSection ThreadArrayLock;
   std::vector<NThread *> ThreadArray;
 
-  void NuxInitialize(const char *CommandLine)
+  void NuxInitialize(const char * /* CommandLine */)
   {
     nux::NuxCoreInitialize(0);
     nux::NuxGraphicsInitialize();
@@ -42,8 +42,8 @@ namespace nux
       int width,
       int height,
       WindowThread *parent,
-      ThreadUserInitFunc user_init_func,
-      void *data,
+      ThreadUserInitFunc /* user_init_func */,
+      void * /* data */,
       bool Modal)
   {
     // check that Parent exist
@@ -177,6 +177,7 @@ namespace nux
     return w;
   }
 
+#elif defined(NO_X11)
 #elif defined(NUX_OS_LINUX)
 #ifdef NUX_OPENGLES_20
   WindowThread *CreateFromForeignWindow (Window X11Window, EGLContext OpenGLContext,

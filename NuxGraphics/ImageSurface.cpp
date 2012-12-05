@@ -35,10 +35,7 @@
 
 namespace nux
 {
-namespace
-{
-logging::Logger logger("nux.image");
-}
+DECLARE_LOGGER(logger, "nux.image");
 
   extern PixelFormatInfo GPixelFormats[];
 
@@ -312,7 +309,7 @@ logging::Logger logger("nux.image");
 // http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall/
 // 7. Watch Your Pixel Store Alignment
   int ImageSurface::GetLevelPitch(BitmapFormat format, int width,
-                                     int height, int miplevel)
+                                     int /* height */, int miplevel)
   {
     int levelwidth = ImageSurface::GetLevelDim(format, width, miplevel);
 
@@ -325,7 +322,7 @@ logging::Logger logger("nux.image");
     return pitch;
   }
 
-  int ImageSurface::GetLevelPitchNoMemAlignment(BitmapFormat format, int width, int height, int miplevel)
+  int ImageSurface::GetLevelPitchNoMemAlignment(BitmapFormat format, int width, int /* height */, int miplevel)
   {
     int levelwidth = ImageSurface::GetLevelDim(format, width, miplevel);
 
@@ -362,25 +359,25 @@ logging::Logger logger("nux.image");
     return leveldepth * size;
   }
 
-  int ImageSurface::GetLevelWidth(BitmapFormat format, int width, int miplevel)
+  int ImageSurface::GetLevelWidth(BitmapFormat /* format */, int width, int miplevel)
   {
     // return 1 if the mip level does not exist.
     return Max<int> (1, width >> miplevel);
   }
 
-  int ImageSurface::GetLevelHeight(BitmapFormat format, int height, int miplevel)
+  int ImageSurface::GetLevelHeight(BitmapFormat /* format */, int height, int miplevel)
   {
     // return 1 if the mip level does not exist.
     return Max<int> (1, height >> miplevel);
   }
 
-  int ImageSurface::GetLevelDim(BitmapFormat format, int length, int miplevel)
+  int ImageSurface::GetLevelDim(BitmapFormat /* format */, int length, int miplevel)
   {
     // return 1 if the mip level does not exist.
     return Max<int> (1, length >> miplevel);
   }
 
-  int ImageSurface::GetNumMipLevel(BitmapFormat format, int width, int height)
+  int ImageSurface::GetNumMipLevel(BitmapFormat /* format */, int width, int height)
   {
     int NumTotalMipLevel    = 1 + floorf(Log2(Max(width, height)));
     return NumTotalMipLevel;

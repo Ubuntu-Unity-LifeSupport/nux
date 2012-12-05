@@ -212,7 +212,7 @@ namespace nux
      return clip_to_width_;
    }
 
-  void StaticText::Draw(GraphicsEngine& graphics_engine, bool forceDraw)
+  void StaticText::Draw(GraphicsEngine& graphics_engine, bool /* forceDraw */)
   {
     if (update_text_rendering_)
     {
@@ -341,6 +341,7 @@ namespace nux
   void StaticText::SetTextColor(const Color& text_color)
   {
     text_color_ = text_color;
+    QueueDraw();
   }
 
   Color StaticText::GetTextColor() const
@@ -809,7 +810,7 @@ namespace nux
     return Size(text_width, text_height);
   }
 
-  void StaticText::RasterizeText(void* cairo_context, Color color)
+  void StaticText::RasterizeText(void* cairo_context, Color /* color */)
   {
     cairo_t* cairo_ctx = (cairo_t*) cairo_context;
 

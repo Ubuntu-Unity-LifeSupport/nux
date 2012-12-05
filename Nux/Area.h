@@ -23,6 +23,7 @@
 #ifndef BASEOBJECT_H
 #define BASEOBJECT_H
 
+#include <string>
 #include <sigc++/sigc++.h>
 #include "NuxCore/InitiallyUnownedObject.h"
 #include "NuxGraphics/Events.h"
@@ -78,10 +79,10 @@ namespace nux
     MINOR_POSITION_BOTTOM = MINOR_POSITION_END,  //!< Deprecated.
     MINOR_POSITION_RIGHT = MINOR_POSITION_END,   //!< Deprecated.
 
-    eAbove = MINOR_POSITION_TOP,      //!< Deprecated.
-    eBelow = MINOR_POSITION_BOTTOM,   //!< Deprecated.
-    eLeft = MINOR_POSITION_LEFT,      //!< Deprecated.
-    eRight = MINOR_POSITION_RIGHT,    //!< Deprecated.
+    eAbove = MINOR_POSITION_START,      //!< Deprecated.
+    eBelow = MINOR_POSITION_END,   //!< Deprecated.
+    eLeft = MINOR_POSITION_START,      //!< Deprecated.
+    eRight = MINOR_POSITION_END,    //!< Deprecated.
     eCenter = MINOR_POSITION_CENTER,  //!< Deprecated.
   } MinorDimensionPosition;
 
@@ -103,10 +104,10 @@ namespace nux
     MAJOR_POSITION_RIGHT = MAJOR_POSITION_END,    //!< Deprecated.
 
 
-    eStackTop = MAJOR_POSITION_TOP,         //!< Deprecated.
-    eStackBottom = MAJOR_POSITION_BOTTOM,   //!< Deprecated.
-    eStackLeft = MAJOR_POSITION_LEFT,       //!< Deprecated.
-    eStackRight = MAJOR_POSITION_RIGHT,     //!< Deprecated.
+    eStackTop = MAJOR_POSITION_START,         //!< Deprecated.
+    eStackBottom = MAJOR_POSITION_END,   //!< Deprecated.
+    eStackLeft = MAJOR_POSITION_START,       //!< Deprecated.
+    eStackRight = MAJOR_POSITION_END,     //!< Deprecated.
     eStackCenter = MAJOR_POSITION_CENTER,   //!< Deprecated.
     eStackExpand = MAJOR_POSITION_SPREAD,   //!< Deprecated.
   }  LayoutContentDistribution;
@@ -237,8 +238,8 @@ namespace nux
         \sa SetWidth(), SetHeight(), SetX(), SetY().
     */
 
-    void SetBaseString(const char *Caption);
-    const NString &GetBaseString() const;
+    void SetBaseString(std::string const& caption);
+    std::string const& GetBaseString() const;
 
     virtual void SetGeometry(const Geometry& geo);
 
@@ -610,13 +611,13 @@ namespace nux
         This signal is only meant to inform that the size is about to change. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChangePending(bool position_about_to_change, bool size_about_to_change) {}
+    virtual void GeometryChangePending(bool /* position_about_to_change */, bool /* size_about_to_change */) {}
     
     /*!
         This signal is only meant to inform that the size has changed. When overriding this function,
         don't do anything that could change the size of this object. Or you risk creating an infinite loop.
     */
-    virtual void GeometryChanged(bool position_has_changed, bool size_has_changed) {}
+    virtual void GeometryChanged(bool /* position_has_changed */, bool /* size_has_changed */) {}
 
     //! Request a Layout recompute after a change of size
     /*
@@ -768,7 +769,7 @@ protected:
     bool              sensitive_;     //!< Input sensitive state of the area
     bool              view_enabled_;  //!< The enable state of a view.
 
-    NString                 _base_string;     //!< A text string property for this area.
+    std::string             base_string_;     //!< A text string property for this area.
 
     Size                    min_size_;        //!< A text string property for this area.
     Size                    max_size_;        //!< A text string property for this area.
@@ -794,12 +795,13 @@ protected:
 
     friend class Layout;
     friend class View;
+    friend class WindowCompositor;
     friend class WindowThread;
+#if !defined(NUX_MINIMAL)
     friend class HSplitter;
     friend class VSplitter;
-    friend class WindowCompositor;
+#endif
   };
-
 }
 #endif // BASEOBJECT_H
 

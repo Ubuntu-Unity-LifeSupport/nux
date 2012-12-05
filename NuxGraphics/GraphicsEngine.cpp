@@ -121,7 +121,7 @@ namespace nux
     }
   }
 
-  void BlendOperator::SetCustomBlendOperator(unsigned int src_blend, unsigned int dst_blend)
+  void BlendOperator::SetCustomBlendOperator(unsigned int /* src_blend */, unsigned int /* dst_blend */)
   {
 
   }
@@ -195,22 +195,23 @@ namespace nux
     SetScissor(0, 0, _graphics_display.GetWindowWidth(), _graphics_display.GetWindowHeight());
     EnableScissoring(true);
 
-
-    bool opengl_14_support = true;
-
-    if ((_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() == 1) &&
-      (_graphics_display.GetGpuDevice()->GetOpenGLMinorVersion() < 4))
-    {
-      // OpenGL version is less than OpenGL 1.4
-      opengl_14_support = false;
-    }
+    GpuDevice* gpu_device = _graphics_display.GetGpuDevice();
+    const GpuInfo& gpu_info = gpu_device->GetGpuInfo();
 
     if (create_rendering_data)
     {
 #ifndef NUX_OPENGLES_20
-      if (_graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Fragment_Shader() &&
-        _graphics_display.GetGpuDevice()->GetGpuInfo().Support_ARB_Vertex_Program() &&
-        opengl_14_support)
+      bool opengl_14_support = true;
+      if ((gpu_device->GetOpenGLMajorVersion() == 1) &&
+        (gpu_device->GetOpenGLMinorVersion() < 4))
+      {
+        // OpenGL version is less than OpenGL 1.4
+        opengl_14_support = false;
+      }
+
+      if (gpu_info.Support_ARB_Fragment_Shader() &&
+          gpu_info.Support_ARB_Vertex_Program() &&
+          opengl_14_support)
       {
         InitAsmColorShader();
         InitAsmTextureShader();
@@ -230,8 +231,6 @@ namespace nux
       }
 #endif
 
-      GpuInfo& gpu_info = _graphics_display.GetGpuDevice()->GetGpuInfo();
-
       if ((gpu_info.Support_ARB_Vertex_Program() && gpu_info.Support_ARB_Fragment_Program())
           || (gpu_info.Support_ARB_Vertex_Shader() && gpu_info.Support_ARB_Fragment_Shader()))
       {
@@ -239,12 +238,15 @@ namespace nux
       }
 
       if (gpu_info.Support_EXT_Framebuffer_Object())
-        _offscreen_fbo = _graphics_display.GetGpuDevice()->CreateFrameBufferObject();
+        _offscreen_fbo = gpu_device->CreateFrameBufferObject();
 
       _offscreen_color_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt2  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
       _offscreen_color_rt3  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
+
+      _offscreen_depth_rt0  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      _offscreen_depth_rt1  = _graphics_display.GetGpuDevice()->CreateTexture(2, 2, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
     }
   }
 
@@ -271,18 +273,18 @@ namespace nux
       (_graphics_display.GetGpuDevice()->GetOpenGLMajorVersion() >= 2))
 #endif
     {
-      NString renderer_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char* , glGetString(GL_RENDERER)));
+      std::string renderer_string = ANSI_TO_TCHAR(NUX_REINTERPRET_CAST(const char* , glGetString(GL_RENDERER)));
       CHECKGL_MSG(glGetString(GL_RENDERER));
 
       // Exclude Geforce FX from using GLSL
-      if (renderer_string.FindFirstOccurence("GeForce FX") != tstring::npos)
+      if (renderer_string.find("GeForce FX", 0) != tstring::npos)
       {
         _use_glsl_shaders = false;
         return;
       }
 
       // Exclude Geforce FX Go from using GLSL: this case is not needed since it is detected by the one above.
-      if (renderer_string.FindFirstOccurence("GeForce FX Go") != tstring::npos)
+      if (renderer_string.find("GeForce FX Go", 0) != tstring::npos)
       {
         _use_glsl_shaders = false;
         return;
@@ -311,14 +313,14 @@ namespace nux
 #if defined(NUX_OS_WINDOWS)
       if (_normal_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
 #else
       if (_normal_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _normal_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
@@ -331,14 +333,14 @@ namespace nux
     #if defined(NUX_OS_WINDOWS)
       if (_bold_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/Tahoma_size_8_bold.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
 #else
       if (_bold_font.IsNull())
       {
-        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).GetTCharPtr(), NUX_TRACKER_LOCATION);
+        FontTexture* fnt = new FontTexture(GNuxGraphicsResources.FindResourceLocation("Fonts/nuxfont_size_8_bold.txt", true).c_str(), NUX_TRACKER_LOCATION);
         _bold_font = ObjectPtr<FontTexture> (fnt);
         fnt->UnReference();
       }
@@ -413,7 +415,8 @@ namespace nux
     return _graphics_display.GetWindowHeight();
   }
 
-  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y, const NString& Str,
+  int GraphicsEngine::RenderColorText(ObjectPtr<FontTexture> Font, int x, int y,
+                                      std::string const& Str,
                                         const Color& TextColor,
                                         bool WriteAlphaChannel,
                                         int NumCharacter)
@@ -424,7 +427,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsEngine::RenderColorTextLineStatic(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, std::string const& Str,
       const Color& TextColor,
       bool WriteAlphaChannel,
       TextAlignment alignment)
@@ -435,7 +438,7 @@ namespace nux
     return 0;
   }
 
-  int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, const NString& Str,
+int GraphicsEngine::RenderColorTextLineEdit(ObjectPtr<FontTexture> Font, const PageBBox& pageSize, std::string const& Str,
       const Color& TextColor,
       bool WriteAlphaChannel,
       const Color& SelectedTextColor,
@@ -729,7 +732,7 @@ namespace nux
 
   void GraphicsEngine::PopClipOffset()
   {
-    if (_clip_offset_stack.size() == 0)
+    if (_clip_offset_stack.empty())
     {
       _clip_offset_x = 0;
       _clip_offset_y = 0;
@@ -864,7 +867,7 @@ namespace nux
     Matrix4 Mat;
     Mat.Zero();
 
-    if (m_2DModelViewMatricesStack.size() <= 0)
+    if (m_2DModelViewMatricesStack.empty())
       return Mat;
 
     std::list<Matrix4>::iterator it;
@@ -997,7 +1000,7 @@ namespace nux
 
   bool GraphicsEngine::PopBlend()
   {
-    if (_blend_stack.size() == 0)
+    if (_blend_stack.empty())
     {
       GetRenderStates().SetBlend(false, GL_ONE, GL_ZERO);
       return false;
@@ -1134,7 +1137,7 @@ namespace nux
     viewport_height = _viewport.height;
   }
 
-  void GraphicsEngine::SetScissorOffset(int x, int y)
+  void GraphicsEngine::SetScissorOffset(int /* x */, int /* y */)
   {
     nuxAssertMsg(0, "[GraphicsEngine::SetScissorOffset] SetScissorOffset is deprecated.");
 //     m_ScissorXOffset = x;
@@ -1201,7 +1204,7 @@ namespace nux
   // 2D Area Clear Color Depth Stencil   //
   /////////////////////////////////////////
 
-  void GraphicsEngine::ClearAreaColorDepthStencil(int x, int y, int width, int height, Color clear_color, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaColorDepthStencil(int x, int y, int width, int height, Color clear_color, float /* cleardepth */, int clearstencil)
   {
     // enable stencil buffer
     CHECKGL(glEnable(GL_STENCIL_TEST));
@@ -1225,7 +1228,7 @@ namespace nux
     QRP_Color(x, y, width, height, clear_color);
   }
 
-  void GraphicsEngine::ClearAreaDepthStencil(int x, int y, int width, int height, float cleardepth, int clearstencil)
+  void GraphicsEngine::ClearAreaDepthStencil(int x, int y, int width, int height, float /* cleardepth */, int clearstencil)
   {
     // enable stencil buffer
     CHECKGL(glEnable(GL_STENCIL_TEST));
@@ -1309,16 +1312,19 @@ namespace nux
       colorbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_R8G8B8A8, NUX_TRACKER_LOCATION);
     }
 
-    if ((depthbuffer.IsValid()) && ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
+    bool use_depth_buffer = _graphics_display.GetGpuDevice()->GetGpuInfo().Support_Depth_Buffer();
+    if (use_depth_buffer &&
+        depthbuffer.IsValid() &&
+        ((depthbuffer->GetWidth() != width) || (depthbuffer->GetHeight() != height)))
     {
       // Generate a new depth texture only if a valid one was passed to this function.
-      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);
+      depthbuffer = _graphics_display.GetGpuDevice()->CreateTexture(width, height, 1, BITFMT_D24S8, NUX_TRACKER_LOCATION);      
     }
 
     fbo->FormatFrameBufferObject(width, height, BITFMT_R8G8B8A8);
     fbo->SetRenderTarget(0, colorbuffer->GetSurfaceLevel(0));
     
-    if (depthbuffer.IsValid())
+    if (use_depth_buffer && depthbuffer.IsValid())
       fbo->SetDepthSurface(depthbuffer->GetSurfaceLevel(0));
     else
       fbo->SetDepthSurface(ObjectPtr<IOpenGLSurface>(NULL));

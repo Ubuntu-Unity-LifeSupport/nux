@@ -34,6 +34,8 @@
 #include "GraphicsDisplay.h"
 
 #include <X11/extensions/shape.h>
+#include <X11/XKBlib.h>
+
 
 namespace nux
 {
@@ -48,6 +50,7 @@ namespace nux
     , glx_window_(0)
 #endif
     , m_NumVideoModes(0)
+    , m_X11VideoModes(0)
     , m_BorderPixel(0)
     , _x11_major(0)
     , _x11_minor(0)
@@ -57,7 +60,7 @@ namespace nux
     , m_X11RepeatKey(true)
     , viewport_size_(Size(0,0))
     , window_size_(Size(0,0))
-    , m_WindowPosition(Point(0,0)) 
+    , m_WindowPosition(Point(0,0))
     , fullscreen_(false)
     , screen_bit_depth_(32)
     , gfx_interface_created_(false)
@@ -110,61 +113,62 @@ namespace nux
 
     NUX_SAFE_DELETE( m_pEvent );
     inlSetThreadLocalStorage(_TLS_GraphicsDisplay, 0);
+    XFree(m_X11VideoModes);
   }
 
-  NString GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindResourceLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
-    NString path = m_ResourcePathLocation.GetFile(ResourceFileName);
+    std::string path = m_ResourcePathLocation.GetFile(ResourceFileName);
 
     if (path == "" && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate resource file: %s.", ResourceFileName);
-      return NString("");
+      return "";
     }
 
     return path;
   }
 
-  NString GraphicsDisplay::FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindUITextureLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath(m_UITextureSearchPath);
-    NString path = searchpath.GetFile(ResourceFileName);
+    std::string path = searchpath.GetFile(ResourceFileName);
 
     if ((path == "") && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate ui texture file: %s.", ResourceFileName);
-      return NString("");
+      return std::string("");
     }
 
     return path;
   }
 
-  NString GraphicsDisplay::FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindShaderLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath(m_ShaderSearchPath);
-    NString path = searchpath.GetFile(ResourceFileName);
+    std::string path = searchpath.GetFile(ResourceFileName);
 
     if ((path == "") && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate shader file: %s.", ResourceFileName);
-      return NString("");
+      return std::string("");
     }
 
     return path;
   }
 
-  NString GraphicsDisplay::FindFontLocation(const char *ResourceFileName, bool ErrorOnFail)
+  std::string GraphicsDisplay::FindFontLocation(const char *ResourceFileName, bool ErrorOnFail)
   {
     FilePath searchpath;
     searchpath.AddSearchPath(m_FontSearchPath);
-    NString path = searchpath.GetFile(ResourceFileName);
+    std::string path = searchpath.GetFile(ResourceFileName);
 
     if ((path == "") && ErrorOnFail)
     {
       nuxCriticalMsg("[GraphicsDisplay::FindResourceLocation] Failed to locate font file file: %s.", ResourceFileName);
-      return NString("");
+      return std::string("");
     }
 
     return path;
@@ -177,20 +181,32 @@ namespace nux
     return gfx_interface_created_;
   }
 
-  static Bool WaitForNotify( Display *dpy, XEvent *event, XPointer arg )
+#ifndef NUX_OPENGLES_20
+  static Bool WaitForNotify( Display * /* dpy */, XEvent *event, XPointer arg )
   {
     return(event->type == MapNotify) && (event->xmap.window == (Window) arg);
   }
+#endif
 
-// TODO: change windowWidth, windowHeight, to window_size;
+  void GraphicsDisplay::XICFocus()
+  {
+    m_xim_controller->FocusInXIC();
+  }
+
+  void GraphicsDisplay::XICUnFocus()
+  {
+    m_xim_controller->FocusOutXIC();
+  }
+
+  // TODO: change windowWidth, windowHeight, to window_size;
   static NCriticalSection CreateOpenGLWindow_CriticalSection;
   bool GraphicsDisplay::CreateOpenGLWindow(const char* window_title,
                                          unsigned int WindowWidth,
                                          unsigned int WindowHeight,
-                                         WindowStyle Style,
-                                         const GraphicsDisplay *Parent,
+                                         WindowStyle /* Style */,
+                                         const GraphicsDisplay * /* Parent */,
                                          bool fullscreen_flag,
-                                         bool create_rendering_data)
+                                         bool /* create_rendering_data */)
   {
     int xinerama_event, xinerama_error;
     int xinerama_major, xinerama_minor;
@@ -451,7 +467,8 @@ namespace nux
       return false;
     }
 
-    XVisualInfo       visual_info = {0};
+    XVisualInfo visual_info;
+    memset(&visual_info, 0, sizeof(visual_info));
     visual_info.visualid = visualid;
     m_X11VisualInfo = XGetVisualInfo(m_X11Display, VisualIDMask, &visual_info, &count);
     if (!m_X11VisualInfo)
@@ -567,6 +584,16 @@ namespace nux
       //XMapRaised(m_X11Display, m_X11Window);
     }
 
+    m_xim_controller = std::make_shared<XIMController>(m_X11Display);
+    m_xim_controller->SetFocusedWindow(m_X11Window);
+
+    if (m_xim_controller->IsXICValid())
+    {
+      long im_event_mask=0;
+      XGetICValues(m_xim_controller->GetXIC(), XNFilterEvents, &im_event_mask, NULL);
+      m_X11Attr.event_mask |= im_event_mask;
+    }
+
 #ifndef NUX_OPENGLES_20
     if (_has_glx_13)
     {
@@ -671,6 +698,8 @@ namespace nux
 
     gfx_interface_created_ = true;
 
+    m_xim_controller = std::make_shared<XIMController>(m_X11Display);
+
     // m_DeviceFactory = new GpuDevice(viewport_size_.GetWidth(), viewport_size_.GetHeight(), BITFMT_R8G8B8A8);
     m_DeviceFactory = new GpuDevice(viewport_size_.width, viewport_size_.height, BITFMT_R8G8B8A8,
         m_X11Display,
@@ -696,6 +725,11 @@ namespace nux
   GpuDevice* GraphicsDisplay::GetGpuDevice() const
   {
     return m_DeviceFactory;
+  }
+
+  void GraphicsDisplay::SetFocusedWindowForXIMController(Window window)
+  {
+    m_xim_controller->SetFocusedWindow(window);
   }
 
   int GraphicsDisplay::GetGlXMajor() const
@@ -1230,6 +1264,9 @@ namespace nux
       bool bProcessEvent = true;
       XNextEvent(m_X11Display, &xevent);
 
+      if (XFilterEvent(&xevent, None) == True)
+        return true;
+
       if (!_event_filters.empty())
       {
         for (auto filter : _event_filters)
@@ -1539,6 +1576,8 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusIn event.");
+
+        m_xim_controller->FocusInXIC();
         break;
       }
 
@@ -1554,6 +1593,8 @@ namespace nux
         m_pEvent->dy = 0;
         m_pEvent->virtual_code = 0;
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: FocusOut event.");
+
+        m_xim_controller->FocusOutXIC();
         break;
       }
 
@@ -1562,7 +1603,7 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyPress event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
+        keysym = XkbKeycodeToKeysym(xevent.xany.display, keycode, 0, 0);
 
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         m_pEvent->key_repeat_count = 0;
@@ -1584,7 +1625,15 @@ namespace nux
          skip = true;
         }
 
-        int num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        int num_char_stored = 0;
+        if (m_xim_controller->IsXICValid())
+        {
+          num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        }
+        else
+        {
+          num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
+        }
         if (num_char_stored && (!skip))
         {
           Memcpy(m_pEvent->text, buffer, num_char_stored);
@@ -1598,7 +1647,7 @@ namespace nux
         //nuxDebugMsg("[GraphicsDisplay::ProcessXEvents]: KeyRelease event.");
         KeyCode keycode = xevent.xkey.keycode;
         KeySym keysym = NoSymbol;
-        keysym = XKeycodeToKeysym(xevent.xany.display, keycode, 0);
+        keysym = XkbKeycodeToKeysym(xevent.xany.display, keycode, 0, 0);
 
         m_pEvent->key_modifiers = GetModifierKeyState(xevent.xkey.state);
         m_pEvent->key_repeat_count = 0;
@@ -2382,7 +2431,7 @@ namespace nux
       _dnd_source_target_accepts_drop = false;
   }
 
-  void GraphicsDisplay::HandleXDndLeave(XEvent event)
+  void GraphicsDisplay::HandleXDndLeave(XEvent /* event */)
   {
     // reset the key things
     _xdnd_types[0] = 0;

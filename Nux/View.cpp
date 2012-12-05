@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Inalogic® Inc.
+ * Copyright 2010, 2012 Inalogic® Inc.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License, as
@@ -31,12 +31,11 @@ namespace nux
 
   View::View(NUX_FILE_LINE_DECL)
   : InputArea(NUX_FILE_LINE_PARAM)
-//   , redirect_rendering_to_texture_(false)
-//   , update_backup_texture_(false)
+  , m_TextColor(1.0f, 1.0f, 1.0f, 1.0f)
+  , view_layout_(nullptr)
+  , draw_cmd_queued_(false)
+  , child_draw_cmd_queued_(false)
   {
-    view_layout_      = NULL;
-    draw_cmd_queued_  = false;
-    m_TextColor       = Color(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   View::~View()
@@ -181,7 +180,6 @@ namespace nux
             full_view_draw_cmd_ = true;
             Draw(graphics_engine, force_draw);
             DrawContent(graphics_engine, force_draw);
-            PostDraw(graphics_engine, force_draw);
           }
           else
           {
@@ -190,12 +188,10 @@ namespace nux
               full_view_draw_cmd_ = true;
               Draw(graphics_engine, false);
               DrawContent(graphics_engine, false);
-              PostDraw(graphics_engine, false);
             }
             else if (update_backup_texture_)
             {
               DrawContent(graphics_engine, false);
-              PostDraw(graphics_engine, false);
             }
           }
           graphics_engine.PopModelViewMatrix();
@@ -245,7 +241,6 @@ namespace nux
         full_view_draw_cmd_ = true;
         Draw(graphics_engine, force_draw);
         DrawContent(graphics_engine, force_draw);
-        PostDraw(graphics_engine, force_draw);
 
         GetPainter().PopPaintLayerStack();
       }
@@ -259,14 +254,12 @@ namespace nux
           full_view_draw_cmd_ = true;
           Draw(graphics_engine, false);
           DrawContent(graphics_engine, false);
-          PostDraw(graphics_engine, false);
 
           GetPainter().PopPaintLayerStack();
         }
         else
         {
           DrawContent(graphics_engine, false);
-          PostDraw(graphics_engine, false);
         }
       }
 
@@ -402,7 +395,7 @@ namespace nux
 
   }
 
-  void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool force_draw)
+  void View::EndBackupTextureRendering(GraphicsEngine& graphics_engine, bool /* force_draw */)
   {
     graphics_engine.PopModelViewMatrix();
 
@@ -423,17 +416,12 @@ namespace nux
     graphics_engine.SetViewport(prev_viewport_.x, prev_viewport_.y, prev_viewport_.width, prev_viewport_.height);
   }
 
-  void View::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void View::Draw(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
 
-  void View::DrawContent(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
-  }
-
-  void View::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
+  void View::DrawContent(GraphicsEngine & /* graphics_engine */, bool /* force_draw */)
   {
 
   }
@@ -449,7 +437,7 @@ namespace nux
       application->AddToDrawList(this);
       application->RequestRedraw();
     }
-    
+
     // Report to a parent view with redirect_rendering_to_texture_ set to true that one of its children
     // needs to be redrawn.
     PrepareParentRedirectedView();
@@ -658,13 +646,13 @@ namespace nux
     return view_enabled_;
   }
 
-  void View::GeometryChangePending(bool position_about_to_change, bool size_about_to_change)
+  void View::GeometryChangePending(bool /* position_about_to_change */, bool /* size_about_to_change */)
   {
     if (IsLayoutDone())
       QueueDraw();
   }
 
-  void View::GeometryChanged(bool position_has_changed, bool size_has_changed)
+  void View::GeometryChanged(bool /* position_has_changed */, bool size_has_changed)
   {
     if (RedirectedAncestor())
     {

@@ -31,6 +31,9 @@
 #include "DoubleValidator.h"
 #include "RGBValuator.h"
 
+#include <sstream>
+#include <iomanip>
+
 namespace nux
 {
   NUX_IMPLEMENT_OBJECT_TYPE(RGBValuator);
@@ -394,7 +397,7 @@ namespace nux
     graphics_engine.PopClippingRectangle();
   }
 
-  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void RGBValuator::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
 
@@ -414,10 +417,10 @@ namespace nux
       DrawHLS(graphics_engine);
     }
 
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
-    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString().GetTCharPtr(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel0->GetGeometry(), m_ComponentLabel0->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel1->GetGeometry(), m_ComponentLabel1->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentLabel2->GetGeometry(), m_ComponentLabel2->GetBaseString(), Color(0xFFFFFFFF));
+    GetPainter().PaintTextLineStatic(graphics_engine, GetSysBoldFont(), m_ComponentAlpha->GetGeometry(), m_ComponentAlpha->GetBaseString(), Color(0xFFFFFFFF));
 
     DrawRedMarker(graphics_engine);
     DrawGreenMarker(graphics_engine);
@@ -648,6 +651,27 @@ namespace nux
     SetRGB(color.red, color.green, color.blue);
   }
 
+  std::string as_hex(float f)
+  {
+    std::ostringstream s;
+    s << std::hex << (int)f;
+    return s.str();
+  }
+
+  std::string as_dec(float f)
+  {
+    std::ostringstream s;
+    s << (int)f;
+    return s.str();
+  }
+
+  std::string as_float(float f)
+  {
+    std::ostringstream s;
+    s << std::setprecision(3) << f;
+    return s.str();
+  }
+
   void RGBValuator::SetRGB(float r, float g, float b)
   {
     rgb_.red   = Clamp(r, 0.0f, 1.0f);
@@ -660,21 +684,21 @@ namespace nux
 
     if (m_color_format == color::HEX)
     {
-      red_caption_->SetText(NString::Printf("%x", (int) (rgb_.red * 255)));
-      green_caption_->SetText(NString::Printf("%x", (int) (rgb_.green * 255)));
-      blue_caption_->SetText(NString::Printf("%x", (int) (rgb_.blue * 255)));
+      red_caption_->SetText(as_hex(rgb_.red * 255));
+      green_caption_->SetText(as_hex(rgb_.green * 255));
+      blue_caption_->SetText(as_hex(rgb_.blue * 255));
     }
     else if (m_color_format == color::INT)
     {
-      red_caption_->SetText(NString::Printf("%d", (int) (rgb_.red * 255)));
-      green_caption_->SetText(NString::Printf("%d", (int) (rgb_.green * 255)));
-      blue_caption_->SetText(NString::Printf("%d", (int) (rgb_.blue * 255)));
+      red_caption_->SetText(as_dec(rgb_.red * 255));
+      green_caption_->SetText(as_dec(rgb_.green * 255));
+      blue_caption_->SetText(as_dec(rgb_.blue * 255));
     }
     else
     {
-      red_caption_->SetText(NString::Printf("%.3f", rgb_.red));
-      green_caption_->SetText(NString::Printf("%.3f", rgb_.green));
-      blue_caption_->SetText(NString::Printf("%.3f", rgb_.blue));
+      red_caption_->SetText(as_float(rgb_.red));
+      green_caption_->SetText(as_float(rgb_.green));
+      blue_caption_->SetText(as_float(rgb_.blue));
     }
 
     // Restore text selection if necessary.
@@ -701,21 +725,21 @@ namespace nux
 
     if (m_color_format == color::HEX)
     {
-      red_caption_->SetText(NString::Printf("%x", (int) (hsv_.hue * 255)));
-      green_caption_->SetText(NString::Printf("%x", (int) (hsv_.saturation * 255)));
-      blue_caption_->SetText(NString::Printf("%x", (int) (hsv_.value * 255)));
+      red_caption_->SetText(as_hex(hsv_.hue * 255));
+      green_caption_->SetText(as_hex(hsv_.saturation * 255));
+      blue_caption_->SetText(as_hex(hsv_.value * 255));
     }
     else if (m_color_format == color::INT)
     {
-      red_caption_->SetText(NString::Printf("%d", (int) (hsv_.hue * 255)));
-      green_caption_->SetText(NString::Printf("%d", (int) (hsv_.saturation * 255)));
-      blue_caption_->SetText(NString::Printf("%d", (int) (hsv_.value * 255)));
+      red_caption_->SetText(as_dec(hsv_.hue * 255));
+      green_caption_->SetText(as_dec(hsv_.saturation * 255));
+      blue_caption_->SetText(as_dec(hsv_.value * 255));
     }
     else
     {
-      red_caption_->SetText(NString::Printf("%.3f", hsv_.hue));
-      green_caption_->SetText(NString::Printf("%.3f", hsv_.saturation));
-      blue_caption_->SetText(NString::Printf("%.3f", hsv_.value));
+      red_caption_->SetText(as_float(hsv_.hue));
+      green_caption_->SetText(as_float(hsv_.saturation));
+      blue_caption_->SetText(as_float(hsv_.value));
     }
 
     if (hsv_.hue >= 1.0f)
@@ -746,21 +770,21 @@ namespace nux
 
     if (m_color_format == color::HEX)
     {
-      red_caption_->SetText(NString::Printf("%x", (int) (hls_.hue * 255)));
-      green_caption_->SetText(NString::Printf("%x", (int) (hls_.lightness * 255)));
-      blue_caption_->SetText(NString::Printf("%x", (int) (hls_.saturation * 255)));
+      red_caption_->SetText(as_hex(hls_.hue * 255));
+      green_caption_->SetText(as_hex(hls_.lightness * 255));
+      blue_caption_->SetText(as_hex(hls_.saturation * 255));
     }
     else if (m_color_format == color::INT)
     {
-      red_caption_->SetText(NString::Printf("%d", (int) (hls_.hue * 255)));
-      green_caption_->SetText(NString::Printf("%d", (int) (hls_.lightness * 255)));
-      blue_caption_->SetText(NString::Printf("%d", (int) (hls_.saturation * 255)));
+      red_caption_->SetText(as_dec(hls_.hue * 255));
+      green_caption_->SetText(as_dec(hls_.lightness * 255));
+      blue_caption_->SetText(as_dec(hls_.saturation * 255));
     }
     else
     {
-      red_caption_->SetText(NString::Printf("%.3f", hls_.hue));
-      green_caption_->SetText(NString::Printf("%.3f", hls_.lightness));
-      blue_caption_->SetText(NString::Printf("%.3f", hls_.saturation));
+      red_caption_->SetText(as_float(hls_.hue));
+      green_caption_->SetText(as_float(hls_.lightness));
+      blue_caption_->SetText(as_float(hls_.saturation));
     }
 
     if (hls_.hue >= 1.0f)
@@ -785,21 +809,21 @@ namespace nux
 
     if (m_color_format == color::HEX)
     {
-      alpha_caption_->SetText(NString::Printf("%x", (int) (alpha_ * 255)));
+      alpha_caption_->SetText(as_hex(alpha_ * 255));
     }
     else if (m_color_format == color::INT)
     {
-      alpha_caption_->SetText(NString::Printf("%d", (int) (alpha_ * 255)));
+      alpha_caption_->SetText(as_dec(alpha_ * 255));
     }
     else
     {
-      alpha_caption_->SetText(NString::Printf("%.3f", alpha_));
+      alpha_caption_->SetText(as_float(alpha_));
     }
 
     sigColorChanged.emit(rgb_.red, rgb_.green, rgb_.blue, alpha_);
   }
 
-  void RGBValuator::OnReceiveMouseDown_Red(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Red(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -859,7 +883,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Green(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Green(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -919,7 +943,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Blue(int x, int /* y */, unsigned long /* button_flags */, unsigned long key_flags)
   {
     if (m_color_model == color::RGB)
     {
@@ -979,7 +1003,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDown_Alpha(int x, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (x < 0)
       alpha_ = 0.0f;
@@ -992,27 +1016,27 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Red(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Red(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Green(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Green(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Blue(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Blue(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseDrag_Alpha(int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     OnReceiveMouseDown_Alpha(x, y, button_flags, key_flags);
   }
 
-  void RGBValuator::OnReceiveMouseUp_Red       (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Red       (int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1061,7 +1085,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Green     (int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Green     (int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1110,7 +1134,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnReceiveMouseUp_Blue(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::OnReceiveMouseUp_Blue(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     if (m_color_model == color::HSV)
     {
@@ -1159,12 +1183,12 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::RecvMouseDownColorModel(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void RGBValuator::RecvMouseDownColorModel(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorModel(AbstractButton* button)
+  void RGBValuator::OnChangeColorModel(AbstractButton* /* button */)
   {
     if (m_color_model == color::RGB)
     {
@@ -1194,7 +1218,7 @@ namespace nux
     QueueDraw();
   }
 
-  void RGBValuator::OnChangeColorFormat(AbstractButton* button)
+  void RGBValuator::OnChangeColorFormat(AbstractButton* /* button */)
   {
     if (m_color_format == color::FLOAT)
     {
@@ -1211,21 +1235,21 @@ namespace nux
 
   }
 
-  void RGBValuator::OnComponentInput(EditTextBox *textbox, const NString &s, int componentIndex)
+  void RGBValuator::OnComponentInput(EditTextBox* /* textbox */, const std::string &s, int componentIndex)
   {
     float f = 0;
 
-    if ((m_color_format == color::HEX) && (m_HexRegExp.Validate(s.GetTCharPtr()) == Validator::Acceptable))
+    if ((m_color_format == color::HEX) && (m_HexRegExp.Validate(s.c_str()) == Validator::Acceptable))
     {
-      f = (float) m_HexRegExp.ToInteger(s.GetTCharPtr()) / 255.0f;
+      f = (float) m_HexRegExp.ToInteger(s.c_str()) / 255.0f;
     }
-    else if ((m_color_format == color::INT) && (m_IntRegExp.Validate(s.GetTCharPtr()) == Validator::Acceptable))
+    else if ((m_color_format == color::INT) && (m_IntRegExp.Validate(s.c_str()) == Validator::Acceptable))
     {
-      f = (float) m_IntRegExp.ToInteger(s.GetTCharPtr()) / 255.0f;
+      f = (float) m_IntRegExp.ToInteger(s.c_str()) / 255.0f;
     }
     else
     {
-      f = (float) m_DoubleRegExp.ToDouble(s.GetTCharPtr());
+      f = (float) m_DoubleRegExp.ToDouble(s.c_str());
     }
 
     f = Clamp(f, 0.0f, 1.0f);
@@ -1302,7 +1326,7 @@ namespace nux
     if (componentIndex == 3)
     {
       float f = 0;
-      f = CharToDouble(s.GetTCharPtr());
+      f = CharToDouble(s.c_str());
       f = Clamp(f, 0.0f, 1.0f);
       //if(m_color_model == color::RGB)
       {

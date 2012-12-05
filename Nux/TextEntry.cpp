@@ -29,10 +29,13 @@
 #include "TextEntry.h"
 
 #if defined(NUX_OS_LINUX)
-#include "TextEntryComposeSeqs.h"
-#include <X11/cursorfont.h>
-#include "InputMethodIBus.h"
+# include "TextEntryComposeSeqs.h"
+# if defined(USE_X11)
+#  include <X11/cursorfont.h>
+#  include "InputMethodIBus.h"
+# endif
 #endif
+
 
 namespace nux
 {
@@ -54,9 +57,8 @@ namespace nux
 
   static unsigned long long GetCurrentTime()
   {
-    GTimeVal tv;
-    g_get_current_time(&tv);
-    return static_cast<unsigned long long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+    gint64 micro_secs = g_get_real_time();
+    return static_cast<unsigned long long>(micro_secs / 1000);
   }
 
   static std::string CleanupLineBreaks(const char *source)
@@ -152,7 +154,7 @@ namespace nux
     , font_dpi_(96.0)
     , _text_color(color::White)
     , align_(CairoGraphics::ALIGN_LEFT)
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     , caret_cursor_(None)
     , ime_(new IBusIMEContext(this))
 #endif
@@ -199,7 +201,7 @@ namespace nux
     if (_texture2D)
       _texture2D->UnReference();
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (ime_)
       delete ime_;
 #endif
@@ -232,7 +234,7 @@ namespace nux
     return area;
   }
 
-  void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::ProcessMouseEvent(int event_type, int x, int y, int /* dx */, int /* dy */, unsigned long button_flags, unsigned long key_flags)
   {
     int X = static_cast<int>(x /*round(event.GetX())*/) - kInnerBorderX - scroll_offset_x_;
     int Y = static_cast<int>(y /*round(event.GetY())*/) - kInnerBorderY - scroll_offset_y_;
@@ -300,9 +302,9 @@ namespace nux
     unsigned long    keysym    ,   /*event keysym*/
     unsigned long    state     ,   /*event state*/
     const char*      character ,   /*character*/
-    unsigned short   keyCount      /*key repeat count*/)
+    unsigned short   /* keyCount */      /*key repeat count*/)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (im_running())
     {
       // FIXME Have to get the x11_keycode for ibus-hangul/korean input
@@ -319,7 +321,7 @@ namespace nux
     if (event_type == NUX_KEYUP)
       return;
 
-#if defined(NUX_OS_LINUX)
+#if !defined(NO_X11)
     if (IsInCompositionMode() || IsInitialCompositionKeySym(keysym))
     {
       if (HandleComposition(keysym))
@@ -524,9 +526,9 @@ namespace nux
     ProcessMouseEvent(NUX_MOUSE_MOVE, x, y, dx, dy, button_flags, key_flags);
   }
 
-  void TextEntry::RecvMouseEnter(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::RecvMouseEnter(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (caret_cursor_ == None)
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
@@ -541,9 +543,9 @@ namespace nux
 #endif
   }
 
-  void TextEntry::RecvMouseLeave(int x, int y, unsigned long button_flags, unsigned long key_flags)
+  void TextEntry::RecvMouseLeave(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (caret_cursor_ != None)
     {
       Display* display = nux::GetGraphicsDisplay()->GetX11Display();
@@ -587,7 +589,7 @@ namespace nux
     FocusOutx();
   }
 
-  void TextEntry::Draw(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::Draw(GraphicsEngine& gfxContext, bool /* forceDraw */)
   {
     MainDraw();
     Geometry base = GetGeometry();
@@ -618,14 +620,9 @@ namespace nux
     gfxContext.PopClippingRectangle();
   }
 
-  void TextEntry::DrawContent(GraphicsEngine& gfxContext, bool forceDraw)
+  void TextEntry::DrawContent(GraphicsEngine& /* gfxContext */, bool /* forceDraw */)
   {
     //MainDraw();
-  }
-
-  void TextEntry::PostDraw(GraphicsEngine& gfxContext, bool forceDraw)
-  {
-    // intentionally left empty
   }
 
   TextEntry::SearchState TextEntry::GetCompositionForList(std::vector<unsigned long> const& input, std::string& composition)
@@ -682,7 +679,7 @@ namespace nux
 
   bool TextEntry::IsInitialCompositionKeySym(unsigned long keysym) const
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     /* Checks if a keysym is a valid initial composition key */
     if (keysym == XK_Multi_key ||
         (keysym >= XK_dead_grave && keysym <= XK_dead_currency) ||
@@ -696,7 +693,7 @@ namespace nux
 
   bool TextEntry::HandleComposition(unsigned long keysym)
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     bool composition_mode = IsInCompositionMode();
 
     if (composition_mode && IsModifierKey(keysym))
@@ -866,8 +863,9 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
         ime_->Focus();
+        nux::GetWindowThread()->GetGraphicsDisplay().XICFocus();
 #endif
         //gtk_im_context_focus_in(im_context_);
         //UpdateIMCursorLocation();
@@ -888,8 +886,9 @@ namespace nux
       if (!readonly_ /*&& im_context_*/)
       {
         need_im_reset_ = true;
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
         ime_->Blur();
+        nux::GetWindowThread()->GetGraphicsDisplay().XICUnFocus();
 #endif
         //gtk_im_context_focus_out(im_context_);
       }
@@ -1736,7 +1735,7 @@ namespace nux
 
   bool TextEntry::im_running()
   {
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     return ime_->IsConnected();
 #else
     return false;
@@ -2328,7 +2327,7 @@ namespace nux
     QueueRefresh(true, true);
   }
 
-  bool TextEntry::InspectKeyEvent(unsigned int eventType, unsigned int key_sym, const char* character)
+  bool TextEntry::InspectKeyEvent(unsigned int /* eventType */, unsigned int /* key_sym */, const char* /* character */)
   {
     nux::Event const& cur_event = GetGraphicsDisplay()->GetCurrentEvent();
 
@@ -2340,7 +2339,7 @@ namespace nux
     unsigned int eventType = event.type;
     unsigned int key_sym = event.GetKeySym();
 
-#if defined(NUX_OS_LINUX)
+#if defined(USE_X11)
     if (im_running())
     {
       // Always allow IBus hotkey events
@@ -2570,8 +2569,13 @@ namespace nux
     return password_char_;
   }
 
-  bool TextEntry::IsPasswordMode() const
+  void TextEntry::SetPasswordMode(bool visible)
   {
-    return visible_;
+    SetVisibility(!visible);
+  }
+
+  bool TextEntry::PasswordMode() const
+  {
+    return !visible_;
   }
 }

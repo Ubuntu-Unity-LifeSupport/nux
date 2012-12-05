@@ -76,7 +76,7 @@ namespace nux
     m_SplitConfig.clear();
   }
 
-  void VSplitter::Draw(GraphicsEngine &graphics_engine, bool force_draw)
+  void VSplitter::Draw(GraphicsEngine &graphics_engine, bool /* force_draw */)
   {
     Geometry base = GetGeometry();
     graphics_engine.PushClippingRectangle(base);
@@ -173,11 +173,6 @@ namespace nux
     }
 
     graphics_engine.PopClippingRectangle();
-  }
-
-  void VSplitter::PostDraw(GraphicsEngine &graphics_engine, bool force_draw)
-  {
-
   }
 
   void VSplitter::OverlayDrawing(GraphicsEngine &graphics_engine)
@@ -415,7 +410,7 @@ namespace nux
     m_initial_config = true;
   }
 
-  void VSplitter::OnSplitterMouseDown(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void VSplitter::OnSplitterMouseDown(int x, int y, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     m_point = Point(x, y);
 
@@ -426,7 +421,7 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::OnSplitterMouseUp(int x, int y, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void VSplitter::OnSplitterMouseUp(int /* x */, int /* y */, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     if (mvt_dx)
     {
@@ -456,7 +451,7 @@ namespace nux
     GetWindowThread()->RequestRedraw();
   }
 
-  void VSplitter::OnSplitterMouseDrag(int x, int y, int dx, int dy, unsigned long button_flags, unsigned long key_flags, int header_pos)
+  void VSplitter::OnSplitterMouseDrag(int x, int /* y */, int /* dx */, int /* dy */, unsigned long /* button_flags */, unsigned long /* key_flags */, int header_pos)
   {
     Geometry geo = m_SplitterObject[header_pos]->GetGeometry();
     int num_element = (int) m_SplitterObject.size();
@@ -586,7 +581,7 @@ namespace nux
 
   Area* VSplitter::KeyNavIteration(KeyNavDirection direction)
   {
-    if (m_InterfaceObject.size() == 0)
+    if (m_InterfaceObject.empty())
       return NULL;
 
     if (next_object_to_key_focus_area_)

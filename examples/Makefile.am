@@ -9,7 +9,8 @@ if BUILD_EXAMPLES
 
 noinst_PROGRAMS = text_entry_focus \
   shortcut_keys \
-  coverflow
+  coverflow \
+  kinetic_scroll_view
 
 #button \
 #                  cairo \
@@ -51,7 +52,8 @@ AM_CPPFLAGS = \
   $(NUX_EXAMPLES_CFLAGS) \
   $(NUX_CFLAGS) \
   $(IBUS_CFLAGS) \
-  $(MAINTAINER_CFLAGS)
+  $(MAINTAINER_CFLAGS) \
+  $(GEIS_CFLAGS)
 
 ALL_LIBS = \
   $(top_builddir)/NuxCore/libnux-core-@NUX_API_VERSION@.la \
@@ -59,7 +61,8 @@ ALL_LIBS = \
   $(top_builddir)/Nux/libnux-@NUX_API_VERSION@.la \
   $(NUX_EXAMPLES_LIBS) \
   $(NUX_LIBS) \
-  $(IBUS_LIBS) 
+  $(IBUS_LIBS) \
+  $(GEIS_LIBS)
 
 # This is the individual executable build. For every $exe in noinst_PROGRAMS
 # you need a $exe_SOURCES and $exe_LDADD so it builds
@@ -111,6 +114,9 @@ shortcut_keys_LDADD = $(ALL_LIBS)
 coverflow_SOURCES = coverflow.cpp
 coverflow_LDADD = $(ALL_LIBS)
 
+kinetic_scroll_view_SOURCES = kinetic_scroll_view.cpp TestButton.cpp
+kinetic_scroll_view_LDADD = $(ALL_LIBS)
+
 if HAVE_GEIS
 gestures_SOURCES = gestures.cpp
 gestures_LDADD = $(ALL_LIBS)
@@ -119,7 +125,7 @@ endif
 # To distribute source add the source code here
 #sourceexampledir = "$(pkgdatadir)/examples"
 #sourceexample_DATA = $(combobox_SOURCES) \
-#                    
+#
 
 endif
 

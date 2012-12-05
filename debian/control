@@ -1,13 +1,19 @@
 Source: nux
 Priority: optional
 Maintainer: Didier Roche <didrocks@ubuntu.com>
-Build-Depends: debhelper (>= 7.0.50~),
+Build-Depends: debhelper (>= 9),
+               dh-autoreconf,
+               gnome-common,
                autotools-dev,
                quilt,
                doxygen,
                libglib2.0-dev (>= 2.25.14),
                libgdk-pixbuf2.0-dev,
                libboost-dev,
+               libboost-filesystem-dev,
+               libboost-system-dev,
+               libgtest-dev,
+               google-mock,
                libcairo2-dev (>= 1.9.14),
                libpng12-dev (>= 1.2.44),
                libglew-dev [!armel !armhf],
@@ -28,17 +34,18 @@ Build-Depends: debhelper (>= 7.0.50~),
                libgeis-dev (>= 2.2.10),
                libibus-1.0-dev,
                libxtst-dev,
-               gcc-4.6,
-               g++-4.6,
 Standards-Version: 3.9.3
 Section: libs
 Homepage: http://launchpad.net/nux
-Vcs-Bzr: https://code.launchpad.net/+branch/ubuntu/nux
+# If you aren't a member of ~unity-team but need to upload packaging changes,
+# just go ahead.  ~unity-team will notice and sync up the code again.
+Vcs-Bzr: https://code.launchpad.net/~unity-team/nux/trunk
 
-Package: libnux-3.0-0
+Package: libnux-4.0-0
 Section: libs
 Architecture: any
-Depends: libnux-3.0-common (= ${source:Version}),
+Pre-Depends: ${misc:Pre-Depends},
+Depends: libnux-4.0-common (= ${source:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
 Provides: libnux-abiversion-${nuxabiversion}
@@ -51,6 +58,8 @@ Description: Visual rendering toolkit for real-time applications - shared lib
 Package: nux-tools
 Section: x11
 Architecture: any
+Multi-Arch: foreign
+Pre-Depends: ${misc:Pre-Depends},
 Depends: ${shlibs:Depends},
          ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - tools
@@ -59,10 +68,10 @@ Description: Visual rendering toolkit for real-time applications - tools
  .
  This package contains various tools for nux
 
-Package: libnux-3.0-dev
+Package: libnux-4.0-dev
 Section: libdevel
 Architecture: any
-Depends: libnux-3.0-0 (= ${binary:Version}),
+Depends: libnux-4.0-0 (= ${binary:Version}),
          libglib2.0-dev (>= 2.25.14),
          libgdk-pixbuf2.0-dev,
          libcairo2-dev (>= 1.9.14),
@@ -84,9 +93,10 @@ Description: Visual rendering toolkit for real-time applications - dev files
  .
  This package contains files that are needed to build applications.
 
-Package: libnux-3.0-common
+Package: libnux-4.0-common
 Section: libs
 Architecture: all
+Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Visual rendering toolkit for real-time applications - common files
  Nux is a graphical user interface toolkit for applications that mixes opengl
