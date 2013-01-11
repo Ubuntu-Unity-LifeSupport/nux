@@ -106,6 +106,9 @@ namespace nux
     NUX_SAFE_DELETE( m_GraphicsContext );
     NUX_SAFE_DELETE( m_DeviceFactory );
 
+    // The XIM Controller needs to clean up before ~GraphicsDisplayX11
+    m_xim_controller.reset();
+
     if (m_CreatedFromForeignWindow == false)
     {
       DestroyOpenGLWindow();
@@ -730,6 +733,11 @@ namespace nux
   void GraphicsDisplay::SetFocusedWindowForXIMController(Window window)
   {
     m_xim_controller->SetFocusedWindow(window);
+  }
+
+  void GraphicsDisplay::RemoveFocusedWindowForXIMController()
+  {
+    m_xim_controller->RemoveFocusedWindow();
   }
 
   int GraphicsDisplay::GetGlXMajor() const
@@ -1438,7 +1446,7 @@ namespace nux
 
   bool GraphicsDisplay::HasXPendingEvent() const
   {
-    return XPending(m_X11Display) ? true : false;
+    return XPending(m_X11Display);
   }
 
   void GraphicsDisplay::RecalcXYPosition(int x_root, int y_root, int &x_recalc, int &y_recalc)
