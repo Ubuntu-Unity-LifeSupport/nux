@@ -1352,11 +1352,10 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
   void WindowThread::AddToDrawList(View *view)
   {
     Area *parent;
-    Geometry geo, pgeo;
-    
-    geo = view->GetAbsoluteGeometry();
+
+    Geometry const& geo = view->GetAbsoluteGeometry();
     parent = view->GetToplevel();
-    
+
     if (parent && (view != parent))
     {
 //       pgeo = parent->GetGeometry();
@@ -1385,7 +1384,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     m_dirty_areas.clear();
   }
   
-  std::vector<Geometry> WindowThread::GetDrawList()
+  std::vector<Geometry> const& WindowThread::GetDrawList() const
   {
     return m_dirty_areas;
   }
@@ -1551,7 +1550,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
       ComputeQueuedLayout();
       
       if (clip)
-        GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(Rect(clip->x, clip->y, clip->width, clip->height));
+        GetWindowThread()->GetGraphicsEngine().SetGlobalClippingRectangle(*clip);
         
       window_compositor_->Draw(window_size_configuration_event_, force_rendering_);
       

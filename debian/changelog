@@ -1,3 +1,15 @@
+nux (4.0.1daily13.04.15-0ubuntu1) raring; urgency=low
+
+  [ Marco Trevisan (Treviño) ]
+  * Buming version to 4.0.1 as per recent ABI changes
+  * Nux is doing a lot of unneeded nux::Geometry copies (LP: #1166268)
+  * Unity makes unneeded copies of Nux DrawList (LP: #1167605)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 773
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 15 Apr 2013 04:14:18 +0000
+
 nux (4.0.0daily13.03.25-0ubuntu1) raring; urgency=low
 
   [ Brandon Schaefer ]
