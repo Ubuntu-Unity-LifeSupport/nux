@@ -15,7 +15,7 @@
 # 
 m4_define([nux_major_version], [4])
 m4_define([nux_minor_version], [0])
-m4_define([nux_micro_version], [0])
+m4_define([nux_micro_version], [2])
 
 m4_define([nux_api_version], [4.0])
 # Increase the number (to the current date) everytime you propose a branch that breaks the API or ABI
@@ -23,7 +23,7 @@ m4_define([nux_api_version], [4.0])
 # e.g.: december 5th, 2011 is: 20111205
 # To make more than one API change in a day, add a number to the date. Like 20111205.xx
 
-m4_define([nux_abi_version], [20130411.0])
+m4_define([nux_abi_version], [20130521.0])
 
 m4_define([nux_version],
           [nux_major_version.nux_minor_version.nux_micro_version])
@@ -385,12 +385,11 @@ fi
 GCC_TESTS_FLAGS="-g -O0 -Wall -Wextra -std=c++0x"
 
 # use strict compiler flags only on development releases
-m4_define([maintainer_mode_default], [m4_if(m4_eval(nux_micro_version % 2), [1], [yes], [no])])
 AC_ARG_ENABLE([maintainer-mode],
               [AC_HELP_STRING([--enable-maintainer-mode=@<:@no/yes@:>@],
                               [Use strict compiler flags @<:@default=no@:>@])],
               [],
-              [enable_maintainer_mode=maintainer_mode_default])
+              [enable_maintainer_mode=no])
 
 AS_IF([test "x$enable_maintainer_mode" = "xyes" && test "x$GCC" = "xyes"],
       [

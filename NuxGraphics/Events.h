@@ -135,6 +135,8 @@ namespace nux
 #define NUX_EVENT_BUTTON4           0x00080000
 
 #define NUX_EVENT_MOUSEWHEEL        0x00100000
+// Describes the event as the first press in the double click event.
+#define NUX_STATE_FIRST_EVENT       0x00200000
 // These flags describe the state of the mouse buttons.
 // They persist over several frame until the mouse buttons change state.
 // Go in mouse_state.
@@ -409,6 +411,7 @@ namespace nux
     int wheel_delta;              //!< Wheel delta.
 
     char            text[NUX_EVENT_TEXT_BUFFER_SIZE];
+    char*           dtext;            //!< Dynamically allocated
     unsigned long   key_modifiers;    //!< Key modifiers. A bitwise inclusive OR of values in KeyModifier.
     unsigned long   mouse_state;
     unsigned short  key_repeat_count; //!< Number of time a key is repeated;

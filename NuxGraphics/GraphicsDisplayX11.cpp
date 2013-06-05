@@ -656,6 +656,9 @@ namespace nux
         m_GLCtx,
         1, 0, false);
 
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetFrameBufferObject()->SetupFrameBufferObject();
+
     m_GraphicsContext = new GraphicsEngine(*this);
 
     //EnableVSyncSwapControl();
@@ -711,6 +714,10 @@ namespace nux
         _fb_config,
         m_GLCtx,
         1, 0, false);
+
+    if (m_DeviceFactory->GetGpuInfo().Support_EXT_Framebuffer_Object())
+      m_DeviceFactory->GetFrameBufferObject()->SetupFrameBufferObject();
+
     m_GraphicsContext = new GraphicsEngine(*this);
 
     InitGlobalGrabWindow();
@@ -1084,6 +1091,7 @@ namespace nux
     }
     else
     {
+      _mouse_state |= NUX_STATE_FIRST_EVENT;
       double_click_counter_ = 1;
     }
 
@@ -1174,6 +1182,11 @@ namespace nux
     _mouse_state |= (xevent.xbutton.state & Button1Mask) ? NUX_STATE_BUTTON1_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button2Mask) ? NUX_STATE_BUTTON2_DOWN : 0;
     _mouse_state |= (xevent.xbutton.state & Button3Mask) ? NUX_STATE_BUTTON3_DOWN : 0;
+
+    if (double_click_counter_ == 1)
+    {
+      _mouse_state |= NUX_STATE_FIRST_EVENT;
+    }
 
     if (xevent.xbutton.type == ButtonRelease)
     {
@@ -1622,6 +1635,7 @@ namespace nux
         m_pEvent->x11_key_state = xevent.xkey.state;
 
         char buffer[NUX_EVENT_TEXT_BUFFER_SIZE];
+
         Memset(m_pEvent->text, 0, NUX_EVENT_TEXT_BUFFER_SIZE);
 
         bool skip = false;
@@ -1633,18 +1647,37 @@ namespace nux
          skip = true;
         }
 
-        int num_char_stored = 0;
-        if (m_xim_controller->IsXICValid())
+        if (!skip)
         {
-          num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
-        }
-        else
-        {
-          num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE, (KeySym*) &m_pEvent->x11_keysym, NULL);
-        }
-        if (num_char_stored && (!skip))
-        {
-          Memcpy(m_pEvent->text, buffer, num_char_stored);
+          int num_char_stored = 0;
+          if (m_xim_controller->IsXICValid())
+          {
+            delete[] m_pEvent->dtext;
+            m_pEvent->dtext = nullptr;
+
+            num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, nullptr,
+                                              0, (KeySym*) &m_pEvent->x11_keysym, nullptr);
+
+            if (num_char_stored > 0)
+            {
+              int buf_len = num_char_stored + 1;
+              m_pEvent->dtext = new char[buf_len];
+              num_char_stored = XmbLookupString(m_xim_controller->GetXIC(), &xevent.xkey, m_pEvent->dtext,
+                                                buf_len, (KeySym*) &m_pEvent->x11_keysym, nullptr);
+
+              m_pEvent->dtext[num_char_stored] = 0;
+            }
+          }
+          else
+          {
+            num_char_stored = XLookupString(&xevent.xkey, buffer, NUX_EVENT_TEXT_BUFFER_SIZE,
+                                            (KeySym*) &m_pEvent->x11_keysym, NULL);
+
+            if (num_char_stored > 0)
+            {
+              Memcpy(m_pEvent->text, buffer, num_char_stored);
+            }
+          }
         }
 
         break;
