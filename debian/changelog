@@ -1,3 +1,9 @@
+nux (4.0.3+13.10.20131011-0ubuntu2) trusty; urgency=medium
+
+  * No change rebuild against glew 1.10.
+
+ -- Dimitri John Ledkov <xnox@ubuntu.com>  Thu, 02 Jan 2014 13:28:28 +0000
+
 nux (4.0.3+13.10.20131011-0ubuntu1) saucy; urgency=low
 
   [ Stephen M. Webb ]
