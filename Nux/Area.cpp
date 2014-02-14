@@ -702,17 +702,17 @@ namespace nux
 
   bool Area::IsArea() const
   {
-    return this->Type().IsDerivedFromType(Area::StaticObjectType);;
+    return this->Type().IsDerivedFromType(Area::StaticObjectType);
   }
 
   bool Area::IsInputArea() const
   {
-    return this->Type().IsDerivedFromType(InputArea::StaticObjectType);;
+    return this->Type().IsDerivedFromType(InputArea::StaticObjectType);
   }
 
   bool Area::IsView() const
   {
-    return this->Type().IsDerivedFromType(View::StaticObjectType);;
+    return this->Type().IsDerivedFromType(View::StaticObjectType);
   }
 
   bool Area::IsLayout() const
@@ -727,7 +727,7 @@ namespace nux
 
   bool Area::IsSpaceLayout() const
   {
-    return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);;
+    return this->Type().IsDerivedFromType(SpaceLayout::StaticObjectType);
   }
 
   void Area::Set2DMatrix(const Matrix4 &mat)
@@ -979,7 +979,7 @@ namespace nux
      if ((event_type == NUX_MOUSE_WHEEL) && mouse_pointer_inside_area)
      {
        if (accept_mouse_wheel_event_ == false)
-         return NULL;
+         return false;
      }
  
      return mouse_pointer_inside_area;
@@ -1126,7 +1126,7 @@ namespace nux
       return;
     }
 
-    if ((redirect_rendering_to_texture_ == false) && redirect)
+    if (!redirect_rendering_to_texture_ && redirect)
     {
       update_backup_texture_ = true;
     }
@@ -1169,14 +1169,13 @@ namespace nux
 
     while (parent)
     {
-      if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == false))
+      if (parent->RedirectRenderingToTexture())
       {
+        if (parent->UpdateBackupTextureForChildRendering())
+          break;
+
         parent->SetUpdateBackupTextureForChildRendering(true);
         parent->PrepareParentRedirectedView();
-      }
-      else if (parent->RedirectRenderingToTexture() && (parent->UpdateBackupTextureForChildRendering() == true))
-      {
-        break;
       }
       else
       {

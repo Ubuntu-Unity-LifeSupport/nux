@@ -1,5 +1,5 @@
 /*
-* Copyright 2012 Inalogic® Inc.
+* Copyright 2012-2013 Inalogic® Inc.
 *
 * This program is free software: you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License, as
@@ -29,6 +29,7 @@
 
 namespace nux
 {
+  class TextEntry;
 
 class XIMController
 {
@@ -37,6 +38,7 @@ public:
   ~XIMController();
 
   void SetFocusedWindow(Window window);
+  void SetCurrentTextEntry(TextEntry* text_entry_);
   void RemoveFocusedWindow();
 
   bool IsXICValid() const;
@@ -44,6 +46,9 @@ public:
 
   void FocusInXIC();
   void FocusOutXIC();
+
+  Window GetCurrentWindow() const;
+
 private:
   void InitXIMCallback();
   static void SetupXIMClientCallback(Display* dpy, XPointer client_data, XPointer call_data);

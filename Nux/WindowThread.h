@@ -29,9 +29,14 @@
 #include "GeisAdapter.h"
 #endif
 
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+#include "XIMController.h"
+#endif
+
 namespace nux
 {
 
+  class BaseWindow;
   class WindowThread;
   class Layout;
   class HLayout;
@@ -216,7 +221,7 @@ namespace nux
 
         @return True if embedded inside Compiz.
     */
-    bool IsEmbeddedWindow();
+    bool IsEmbeddedWindow() const;
 
 #if defined(NUX_OS_WINDOWS)
     bool ProcessForeignEvent(HWND hWnd, MSG msg, WPARAM wParam, LPARAM lParam, void *data);
@@ -227,13 +232,37 @@ namespace nux
 #endif
 
     /*!
+        In embedded mode, allow presentation on any windows intersecting this
+        rect. The effect of this is culmulative for the frame, so it can be
+        called multiple times with many different rects until
+        RenderInterfaceFromForeignCmd is called.
+        \sa IsEmbeddedWindow
+
+        @param rect Region of the display to consider for presenting windows
+     */
+    void PresentWindowsIntersectingGeometryOnThisFrame(Geometry const& rect);
+
+    /*!
         Render the interface. This command is send from the pluging when the window thread is embedded.
         The clip region matches the surface of one single monitor screen, or a region inside that screen.
         \sa IsEmbeddedWindow.
 
         @param clip Region of the display to render.
     */
-    void RenderInterfaceFromForeignCmd(Geometry *clip);
+    void RenderInterfaceFromForeignCmd(Geometry const& clip);
+
+    /*!
+        Used to mark the end of the foreign frame. All calls to PresentInEmbeddedModeOnThisFrame
+        are now redirected to this upcoming frame where we will be called next.
+     */
+    void ForeignFrameEnded();
+
+    /*!
+        Used to mark the cutoff point where all calls to PresentInEmbeddedModeOnThisFrame
+        should be effective on the next frame, and not this one, because the parent context
+        has stopped tracking damage events for this frame
+     */
+    void ForeignFrameCutoff();
 
 #if !defined(NUX_MINIMAL)
     /*!
@@ -319,11 +348,21 @@ namespace nux
 
     bool IsRedrawNeeded() const;
 
+    // DrawList - this is a maintained list of areas that will
+    // be completely redraw on the next frame
     void AddToDrawList(View *view);
-
     void ClearDrawList();
 
     std::vector<Geometry> const& GetDrawList() const;
+
+    // PresentationList - this is a maintained list of areas that
+    // will be presented to the reference framebuffer or backbuffer
+    // in embedded mode on the next frame
+    bool AddToPresentationList(nux::BaseWindow*, bool force);
+
+    std::vector<Geometry> GetPresentationListGeometries() const;
+
+    Event GetNextEvent();
 
 #ifdef NUX_GESTURES_SUPPORT
     /*!
@@ -337,6 +376,11 @@ namespace nux
     typedef std::function<void()> FdWatchCallback;
     void WatchFdForEvents(int fd, const FdWatchCallback &);
     void UnwatchFd(int fd);
+
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+    void XICFocus(TextEntry* text_entry);
+    void XICUnFocus();
+#endif
 
   protected:
 
@@ -542,7 +586,24 @@ namespace nux
         This list contains the layout that need to be recomputed following the resizing of one of the sub element.
     */
     std::list<Area *> _queued_layout_list;
-    std::vector<Geometry> m_dirty_areas;
+    std::vector<Geometry> dirty_areas_;
+
+    typedef nux::ObjectWeakPtr<nux::BaseWindow> WeakBaseWindowPtr;
+
+    std::vector<WeakBaseWindowPtr> presentation_list_embedded_;
+
+    /*!
+        This list contains al lthe windows which will be presented on the next frame
+        (eg, after ForeignFrameEnded they are moved into m_presentation_list_embedded
+         and marked for presentation)
+     */
+    std::vector<WeakBaseWindowPtr> presentation_list_embedded_next_frame_;
+
+    /*! Whether or not the current frame is "frozen" because the host WM has stopped tracking
+        damage events. If so we should put all presentation requests on the next frame instead
+        of this one
+     */
+    bool foreign_frame_frozen_;
 
     //! This variable is true while we are computing the layout the starting from the outmost layout(the Main Layout);
     bool _inside_layout_cycle;
@@ -657,6 +718,10 @@ namespace nux
 
 #ifdef NUX_GESTURES_SUPPORT
     std::unique_ptr<GeisAdapter> geis_adapter_;
+#endif
+
+#if defined(NUX_OS_LINUX) && defined(USE_X11)
+    std::shared_ptr<XIMController> xim_controller_;
 #endif
 
     /*!

@@ -367,7 +367,7 @@ namespace nux
 #ifndef NUX_OPENGLES_20
     // OpenGL extension initialization
     GLenum Glew_Ok = 0;
-    Glew_Ok = Glew_Ok;  // Suppress compiler warning about set but not used variable.
+    Glew_Ok = Glew_Ok + (1 - 1);  // Suppress compiler warning about set but not used variable.
 #ifdef GLEW_MX
     Glew_Ok = glewContextInit(glewGetContext());
     nuxAssertMsg(Glew_Ok == GLEW_OK, "[GpuDevice::GpuDevice] GL Extensions failed to initialize.");
@@ -1069,8 +1069,14 @@ namespace nux
       return;
     }
 
+#ifdef NUX_OPENGLES_20
+    GLenum binding = GL_FRAMEBUFFER;
+#else
+    GLenum binding = GL_DRAW_FRAMEBUFFER_EXT;
+#endif
+
     active_framebuffer_object_.Release();
-    CHECKGL(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+    CHECKGL(glBindFramebufferEXT(binding, 0));
     CHECKGL(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0));
   }
 

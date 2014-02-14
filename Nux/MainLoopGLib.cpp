@@ -13,7 +13,7 @@
 
 namespace nux
 {
-DECLARE_LOGGER(logger, "nux.windows.thread");
+  DECLARE_LOGGER(logger, "nux.windows.thread");
 
   #if (defined(NUX_OS_LINUX) || defined(NUX_USE_GLIB_LOOP_ON_WINDOWS)) && (!defined(NUX_DISABLE_GLIB_LOOP))
 
@@ -43,6 +43,11 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     unsigned int id;
   } TimeoutData;
 
+  Event GetSystemEvent(WindowThread* window_thread)
+  {
+    return window_thread->GetNextEvent();
+  }
+
   gboolean nux_timeout_dispatch(gpointer user_data)
   {
     bool repeat = false;
@@ -59,8 +64,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     }
     else
     {
-      Event event;
-      dd->window_thread->GetGraphicsDisplay().GetSystemEvent(&event);
+      Event event = GetSystemEvent(dd->window_thread);
       return_code = dd->window_thread->ProcessEvent(event);
     }
 
@@ -128,8 +132,7 @@ DECLARE_LOGGER(logger, "nux.windows.thread");
     nux_glib_threads_lock();
     WindowThread *window_thread = NUX_STATIC_CAST(WindowThread *, user_data);
 
-    Event event;
-    window_thread->GetGraphicsDisplay().GetSystemEvent(&event);
+    Event event = GetSystemEvent(window_thread);
     unsigned int return_code = window_thread->ProcessEvent(event);
 
     if (return_code == 0 && !window_thread->IsEmbeddedWindow())
