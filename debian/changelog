@@ -1,3 +1,9 @@
+nux (4.0.8+18.10.20180623-0ubuntu2) focal; urgency=medium
+
+  * No-change rebuild for libgcc-s1 package name change.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 24 Mar 2020 15:08:28 +0100
+
 nux (4.0.8+18.10.20180623-0ubuntu1) cosmic; urgency=medium
 
   * debian/control: update Vcs
