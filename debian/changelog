@@ -1,3 +1,10 @@
+nux (4.0.8+18.10.20180623-0ubuntu3) groovy; urgency=medium
+
+  * Fix ftbfs: do not build with -Werror, include boost/shared_ptr.hpp before
+    trying to use boost::shared_ptr
+
+ -- Michael Hudson-Doyle <michael.hudson@ubuntu.com>  Tue, 09 Jun 2020 12:34:03 +1200
+
 nux (4.0.8+18.10.20180623-0ubuntu2) focal; urgency=medium
 
   * No-change rebuild for libgcc-s1 package name change.
