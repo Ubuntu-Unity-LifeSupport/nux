@@ -1,3 +1,9 @@
+nux (4.0.8+18.10.20180623-0ubuntu4) jammy; urgency=medium
+
+  * No-change rebuild against latest gdk-pixbuf
+
+ -- Jeremy Bicha <jeremy.bicha@canonical.com>  Thu, 10 Mar 2022 07:00:45 -0500
+
 nux (4.0.8+18.10.20180623-0ubuntu3) groovy; urgency=medium
 
   * Fix ftbfs: do not build with -Werror, include boost/shared_ptr.hpp before
