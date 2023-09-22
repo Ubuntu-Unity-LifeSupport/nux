@@ -1,3 +1,10 @@
+nux (4.0.8+18.10.20180623-0ubuntu5) mantic; urgency=medium
+
+  * Drop std=c++0x to fix FTBFS things require C++14 now, and C++17 is the
+    default.
+
+ -- Dimitri John Ledkov <dimitri.ledkov@canonical.com>  Fri, 22 Sep 2023 22:27:39 +0100
+
 nux (4.0.8+18.10.20180623-0ubuntu4) jammy; urgency=medium
 
   * No-change rebuild against latest gdk-pixbuf
