@@ -1,3 +1,10 @@
+nux (4.0.8+18.10.20180623-0ubuntu7) noble; urgency=medium
+
+  * Don't run the tests on armhf, now segfaulting.
+    See LP #2054351.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 20 Feb 2024 00:03:43 +0100
+
 nux (4.0.8+18.10.20180623-0ubuntu6) noble; urgency=medium
 
   * Disable the failing TestLoggingWriter.TestWriteMessage test.

@@ -6,10 +6,13 @@
 DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
 gles2_architectures := armel armhf
 
+ifneq (,$(filter $(DEB_HOST_ARCH),armhf))
+  DEB_BUILD_OPTIONS := $(DEB_BUILD_OPTIONS) nocheck
+endif
 ifneq (,$(filter $(DEB_HOST_ARCH),s390x))
   DEB_BUILD_OPTIONS := $(DEB_BUILD_OPTIONS) noopt nocheck
-  export DEB_BUILD_OPTIONS
 endif
+export DEB_BUILD_OPTIONS
 
 %:
 	dh $@ --with quilt,autoreconf --parallel
