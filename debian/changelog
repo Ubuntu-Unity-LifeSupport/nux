@@ -1,3 +1,9 @@
+nux (4.0.8+18.10.20180623-0ubuntu10) noble; urgency=medium
+
+  * No-change rebuild for CVE-2024-3094
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Sun, 31 Mar 2024 02:41:16 +0000
+
 nux (4.0.8+18.10.20180623-0ubuntu9) noble; urgency=medium
 
   * No-change rebuild against libglib2.0-0t64
