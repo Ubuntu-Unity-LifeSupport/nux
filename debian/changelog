@@ -1,3 +1,9 @@
+nux (4.0.8+18.10.20180623-0ubuntu11) questing; urgency=medium
+
+  * d/control: use the non deprecated libgdk-pixbuf-2.0-dev (lp: #2118581)
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Thu, 24 Jul 2025 23:05:33 +0200
+
 nux (4.0.8+18.10.20180623-0ubuntu10) noble; urgency=medium
 
   * No-change rebuild for CVE-2024-3094
