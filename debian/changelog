@@ -1,3 +1,9 @@
+nux (4.0.8+18.10.20180623-0ubuntu12) resolute; urgency=medium
+
+  * debian/patches: Add patch for migrating from libpcre3 to libpcre2 (LP: #2103918)
+
+ -- Tomasz Jeruzalski <tomekdev17@gmail.com>  Wed, 28 Jan 2026 19:03:12 +0000
+
 nux (4.0.8+18.10.20180623-0ubuntu11) questing; urgency=medium
 
   * d/control: use the non deprecated libgdk-pixbuf-2.0-dev (lp: #2118581)
