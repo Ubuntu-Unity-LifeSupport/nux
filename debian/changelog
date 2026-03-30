@@ -1,6 +1,11 @@
 nux (4.0.8+18.10.20180623-0ubuntu12) resolute; urgency=medium
 
-  * debian/patches: Add patch for migrating from libpcre3 to libpcre2 (LP: #2103918)
+  [ Tomasz Jeruzalski ]
+  * d/p/migrate-to-libpcre2.patch: Add patch for migrating from libpcre3 to
+    libpcre2 (LP: #2103918)
+
+  [ Dave Jones ]
+  * d/p/boost1.90.patch: Fix FTBFS with boost1.90
 
  -- Tomasz Jeruzalski <tomekdev17@gmail.com>  Wed, 28 Jan 2026 19:03:12 +0000
 
