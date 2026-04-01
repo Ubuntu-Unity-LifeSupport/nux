@@ -1,3 +1,10 @@
+nux (4.0.8+18.10.20180623-0ubuntu13) resolute; urgency=medium
+
+  * d/p/migrate-to-libpcre2.patch: Update patch for fixing FTBFS
+    unity (LP: #2147013)
+
+ -- Rahammetoela Toekiman <fusekai@outlook.com>  Wed, 1 Apr 2026 09:14:00 -0300
+
 nux (4.0.8+18.10.20180623-0ubuntu12) resolute; urgency=medium
 
   [ Tomasz Jeruzalski ]
