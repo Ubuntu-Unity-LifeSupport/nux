@@ -1,3 +1,10 @@
+nux (4.0.8+18.10.20180623-0ubuntu14) stonking; urgency=medium
+
+  * debian/patches/remove_unicode_licensed.patch: Remove unicode-licensed
+    code (LP: #2147049).
+
+ -- Tomasz Jeruzalski <tomekdev17@gmail.com>  Sun, 12 Apr 2026 19:21:51 +0200
+
 nux (4.0.8+18.10.20180623-0ubuntu13) resolute; urgency=medium
 
   * d/p/migrate-to-libpcre2.patch: Update patch for fixing FTBFS
