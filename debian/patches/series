@@ -6,3 +6,4 @@ disable-TestLoggingWriter-test.diff
 boost1.90.patch
 remove_unicode_licensed.patch
 fix-missing-vidmode.patch
+fix-fbo-attachment-arrays.patch
