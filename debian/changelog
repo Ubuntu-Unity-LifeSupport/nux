@@ -1,3 +1,20 @@
+nux (4.0.8+18.10.20180623-0ubuntu15+unity3) resolute; urgency=medium
+
+  * debian/patches/fix-missing-vidmode.patch: keep only the fix for a server
+    without XF86VidMode. The two extra hunks go: the NULL after the fullscreen
+    free moves to its own patch below, and freeing an old list before a new
+    query guarded a second CreateOpenGLWindow on one display, which nothing
+    does.
+  * debian/patches/fix-fullscreen-mode-list-double-free.patch: the fullscreen
+    branch freed the XF86VidMode mode list and the destructor freed it again.
+    Reproduced through GLWindowManager::CreateGLWindow on Xorg; not reached by
+    Unity. Clear the pointer after the free, with a test in gtest-nuxgraphics.
+  * debian/patches/fix-fbo-attachment-arrays.patch: add a test in
+    gtest-nuxgraphics that the FBO keeps and releases its colour attachment
+    (LP: #2160298).
+
+ -- NeiroNext <mihail.rozshko@gmail.com>  Mon, 28 Sep 2026 15:02:46 +0000
+
 nux (4.0.8+18.10.20180623-0ubuntu15+unity2) resolute; urgency=medium
 
   * debian/patches/fix-fbo-attachment-arrays.patch: keep the FBO colour
