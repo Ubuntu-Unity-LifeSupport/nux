@@ -12,8 +12,15 @@ nux (4.0.8+18.10.20180623-0ubuntu15+unity3) resolute; urgency=medium
   * debian/patches/fix-fbo-attachment-arrays.patch: add a test in
     gtest-nuxgraphics that the FBO keeps and releases its colour attachment
     (LP: #2160298).
+  * debian/patches/tests-dummy-xorg-noreset.patch: start the tests' dummy X
+    server with -noreset. It reset whenever the last client disconnected,
+    about once per test, and a test connecting during a reset got no display
+    and crashed.
+  * debian/patches/tests-windowthread-join-watchdog.patch: join the
+    TestWindowThread watchdog thread instead of deleting it while it still
+    runs; the thread used the freed object and crashed.
 
- -- NeiroNext <mihail.rozshko@gmail.com>  Mon, 28 Sep 2026 15:02:46 +0000
+ -- NeiroNext <mihail.rozshko@gmail.com>  Mon, 28 Sep 2026 20:44:05 +0000
 
 nux (4.0.8+18.10.20180623-0ubuntu15+unity2) resolute; urgency=medium
 
